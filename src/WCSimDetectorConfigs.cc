@@ -253,9 +253,9 @@ void WCSimDetectorConstruction::SetHyperKGeometry()
   WCPMTODRadius         = PMTOD->GetRadius();
 
   // OD Coverage //
-  WCPMTODperCellHorizontal = 2;
-  WCPMTODperCellVertical   = 2;
-  WCPMTODPercentCoverage   = 0.6; //default 1%
+  WCPMTODperCellHorizontal = 1;
+  WCPMTODperCellVertical   = 1;
+  WCPMTODPercentCoverage   = 1.; //default 1%
 
   // Shift between PMTs inside a cell //
   WCODPMTShift = 0.*cm;
