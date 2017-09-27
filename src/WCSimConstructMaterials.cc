@@ -180,6 +180,16 @@ void WCSimDetectorConstruction::ConstructMaterials()
   Tyvek->AddElement(elC, 1);  //polyethylene
   Tyvek->AddElement(elH, 2);
 
+  //---PVT - WLS plates eljen EJ-286
+  // linear formula [CH2CH(C6H4CH3)]n
+  // keep the ethylene part for the moment
+  // TODO: Check if difference between CH2 and full formula
+  density = 1.032*g/cm3;  // at 20deg
+  G4Material* WLS_PVT
+      = new G4Material("WLS_PVT",density,2);
+  WLS_PVT->AddElement(elC, 1); //
+  WLS_PVT->AddElement(elH, 2); //
+
   //---Glass
  
   density = 2.20*g/cm3;
@@ -821,8 +831,23 @@ void WCSimDetectorConstruction::ConstructMaterials()
    //
    // ----
 
+  //---PVT - WLS plates eljen EJ-286
+  //
+  OpWaterWLSSurface =
+      new G4OpticalSurface("WaterWLSCellSurface");
 
-   G4MaterialPropertiesTable *myMPT1 = new G4MaterialPropertiesTable();
+  OpWaterWLSSurface->SetType(dielectric_dielectric);
+  OpWaterWLSSurface->SetModel(unified);
+  OpWaterWLSSurface->SetFinish(polished); // surface WLS/Water
+  OpWaterWLSSurface->SetSigmaAlpha(0.1); // TODO: WTF?
+
+  G4double RINDEX_WLS[NUM] =
+      { 1.58, 1.58 }; // polyethylene permittivity is ~2.25
+  //
+  // ----
+
+
+  G4MaterialPropertiesTable *myMPT1 = new G4MaterialPropertiesTable();
    // M Fechner : new   ; wider range for lambda
    myMPT1->AddProperty("RINDEX", ENERGY_water, RINDEX1, NUMENTRIES_water);
    myMPT1->AddProperty("ABSLENGTH",ENERGY_water, ABSORPTION_water, NUMENTRIES_water);
@@ -875,6 +900,40 @@ void WCSimDetectorConstruction::ConstructMaterials()
    myMPT6->AddProperty("ABSLENGTH", ENERGY_water, BLACKABS_blacksheet, NUMENTRIES_water);
    Tyvek->SetMaterialPropertiesTable(myMPT6);
 
+  //---PVT - WLS plates eljen EJ-286
+  const G4int NUMENTRIES_WLS = 21;
+
+  G4double PhotonWL[NUMENTRIES_WLS] =
+      { 280, 290, 300, 310, 320, 380, 390, 400,
+        410, 420, 430, 440, 450, 460, 470, 480,
+        490, 500, 510, 520, 800 };
+
+  G4double PhotonEnergy[NUMENTRIES_WLS] =
+      { 1.5498*eV, 2.3843*eV, 2.4311*eV, 2.4797*eV, 2.5303*eV,
+        2.5830*eV, 2.6380*eV, 2.6953*eV, 2.7552*eV, 2.8178*eV, 2.8834*eV, 2.9520*eV, 3.0240*eV,
+        3.0996*eV, 3.1791*eV, 3.2627*eV, 3.8745*eV, 3.9995*eV, 4.1328*eV, 4.2753*eV, 4.4280*eV };
+
+  G4double RIndexPlate[NUMENTRIES_WLS] =
+      { 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58,
+        1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58,
+        1.58 };
+  G4double AbsPlate[NUMENTRIES_WLS] =
+      { 0*mm, 0*mm, 0*mm, 0.*mm, 0.*mm, 0.*mm, 0.*mm, 0.*mm, 0.*mm, 0.*mm,
+        0.05*5*mm, 0.2*5*mm, 0.6*5*mm, 0.95*5*mm,
+        1.*5*mm, 1.*5*mm, 0.95*5*mm, 0.80*5*mm, 0.70*5*mm, 0.55*5*mm, 0. };
+
+  G4double EmissionPlate[NUMENTRIES_WLS] =
+      { 0., 0.05, 0.1, 0.1, 0.15,
+        0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1., 0.8, 0.4,
+        0.1, 0., 0., 0., 0., 0., 0.};
+
+  G4MaterialPropertiesTable *MPT_WLSPlates = new G4MaterialPropertiesTable();
+  MPT_WLSPlates->AddProperty("RINDEX",PhotonEnergy,RIndexPlate,NUMENTRIES_WLS);
+  MPT_WLSPlates->AddProperty("WLSABSLENGTH",PhotonEnergy,AbsPlate,NUMENTRIES_WLS);
+  MPT_WLSPlates->AddProperty("WLSCOMPONENT",PhotonEnergy,EmissionPlate,NUMENTRIES_WLS);
+  MPT_WLSPlates->AddConstProperty("WLSTIMECONSTANT", 0.5*ns); // TODO: Need measurement
+
+  WLS_PVT->SetMaterialPropertiesTable(MPT_WLSPlates);
 
    //	------------- Surfaces --------------
 
@@ -909,5 +968,16 @@ void WCSimDetectorConstruction::ConstructMaterials()
    myST3->AddProperty("EFFICIENCY", PP, EFFICIENCY_blacksheet, NUM);
    //use same efficiency as blacksheet, which is 0
    OpWaterTySurface->SetMaterialPropertiesTable(myST3);
+
+  //---PVT - WLS plates eljen EJ-286
+  G4MaterialPropertiesTable *myST4 = new G4MaterialPropertiesTable();
+  myST4->AddProperty("RINDEX", PP, RINDEX_WLS, NUM);
+//  myST4->AddProperty("SPECULARLOBECONSTANT", PP, TySPECULARLOBECONSTANT, NUM);
+//  myST4->AddProperty("SPECULARSPIKECONSTANT", PP, TySPECULARSPIKECONSTANT, NUM);
+//  myST4->AddProperty("BACKSCATTERCONSTANT", PP, TyBACKSCATTERCONSTANT, NUM);
+//  myST4->AddProperty("REFLECTIVITY", PP, TyREFLECTIVITY, NUM);
+//  myST4->AddProperty("EFFICIENCY", PP, EFFICIENCY_blacksheet, NUM);
+  //use same efficiency as blacksheet, which is 0
+  OpWaterWLSSurface->SetMaterialPropertiesTable(myST4);
 
 }

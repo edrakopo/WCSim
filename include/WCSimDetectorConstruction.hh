@@ -173,6 +173,9 @@ private:
   //Tyvek surface - jl145
   G4OpticalSurface * OpWaterTySurface;
 
+  //WLS Plates surface
+  G4OpticalSurface * OpWaterWLSSurface;
+
   // The messenger we use to change the geometry.
 
   WCSimDetectorMessenger* messenger;
