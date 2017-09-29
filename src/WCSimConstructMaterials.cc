@@ -184,6 +184,7 @@ void WCSimDetectorConstruction::ConstructMaterials()
   // linear formula [CH2CH(C6H4CH3)]n
   // keep the ethylene part for the moment
   // TODO: Check if difference between CH2 and full formula
+
   density = 1.032*g/cm3;  // at 20deg
   G4Material* WLS_PVT
       = new G4Material("WLS_PVT",density,2);
@@ -972,12 +973,6 @@ void WCSimDetectorConstruction::ConstructMaterials()
   //---PVT - WLS plates eljen EJ-286
   G4MaterialPropertiesTable *myST4 = new G4MaterialPropertiesTable();
   myST4->AddProperty("RINDEX", PP, RINDEX_WLS, NUM);
-//  myST4->AddProperty("SPECULARLOBECONSTANT", PP, TySPECULARLOBECONSTANT, NUM);
-//  myST4->AddProperty("SPECULARSPIKECONSTANT", PP, TySPECULARSPIKECONSTANT, NUM);
-//  myST4->AddProperty("BACKSCATTERCONSTANT", PP, TyBACKSCATTERCONSTANT, NUM);
-//  myST4->AddProperty("REFLECTIVITY", PP, TyREFLECTIVITY, NUM);
-//  myST4->AddProperty("EFFICIENCY", PP, EFFICIENCY_blacksheet, NUM);
-  //use same efficiency as blacksheet, which is 0
   OpWaterWLSSurface->SetMaterialPropertiesTable(myST4);
 
 }

@@ -188,6 +188,7 @@ private:
   void  ConstructMaterials();
 
   G4LogicalVolume* logicWCBarrelCellODTyvek;
+  G4LogicalVolume* logicWCBarrelCellODWLSPlate;
   G4LogicalVolume* logicWCTowerODTyvek;
 
   G4LogicalVolume* logicWCBarrelCellBlackSheet;
@@ -315,6 +316,7 @@ private:
   G4double WCODHeightWaterDepth;
   G4double WCODDeadSpace;
   G4double WCODTyvekSheetThickness;
+  G4double WCODWLSPlatesThickness;
 
   G4double WCODCapPMTSpacing;
   G4double WCODCapEdgeLimit;

@@ -37,6 +37,7 @@ WCSimDetectorConstruction::WCSimDetectorConstruction(G4int DetConfig,WCSimTuning
 
   isODConstructed = false;
 
+
   myConfiguration = DetConfig;
 
   //-----------------------------------------------------
