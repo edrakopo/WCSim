@@ -5,6 +5,7 @@ class WCSimDetectorConstruction;
 class G4UIdirectory;
 class G4UIcmdWithAString;
 
+#include <G4UIcmdWithAnInteger.hh>
 #include "G4UImessenger.hh"
 #include "globals.hh"
 #include "G4ios.hh"
@@ -43,6 +44,20 @@ class WCSimDetectorMessenger: public G4UImessenger
   G4UIcmdWithAString* tubeCmd;
   G4UIcmdWithAString* distortionCmd;
   G4UIcmdWithoutParameter* WCConstruct;
+
+  // OD Geometry
+  G4UIcmdWithADoubleAndUnit* ODLateralWaterDepth;
+  G4UIcmdWithADoubleAndUnit* ODHeightWaterDepth;
+  G4UIcmdWithADoubleAndUnit* ODDeadSpace;
+  G4UIcmdWithADoubleAndUnit* ODTyvekSheetThickness;
+  G4UIcmdWithADoubleAndUnit* ODWLSPlatesThickness;
+  // OD PMTs
+  G4UIcmdWithAString* PMTODRadius;
+  // #PMTs and position
+  G4UIcmdWithAnInteger* PMTODperCellHorizontal;
+  G4UIcmdWithAnInteger* PMTODperCellVertical;
+  G4UIcmdWithADouble* PMTODPercentCoverage;
+  G4UIcmdWithADoubleAndUnit* ODPMTShift;
 
 };
 
