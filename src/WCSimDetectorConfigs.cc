@@ -372,3 +372,5 @@ void WCSimDetectorConstruction::MatchWCSimAndEggShapedHyperK()
 {
   WCLength = waterTank_Length;
   WCPosition = 0.;
+  WCPMTRadius = innerPMT_Radius;		
+}
