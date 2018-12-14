@@ -811,11 +811,18 @@ void WCSimDetectorConstruction::ConstructMaterials()
 
   OpWaterTySurface =
       new G4OpticalSurface("WaterTyCellSurface");
+  OpWaterTySurfaceCave =
+      new G4OpticalSurface("WaterTyCellSurfaceCave");
 
   OpWaterTySurface->SetType(dielectric_metal); // Only absorption and reflection
   OpWaterTySurface->SetModel(unified);
   OpWaterTySurface->SetFinish(ground); // ground surface with tyvek
   OpWaterTySurface->SetSigmaAlpha(0.2);
+
+	OpWaterTySurfaceCave->SetType(dielectric_metal); // Only absorption and reflection
+  OpWaterTySurfaceCave->SetModel(unified);
+  OpWaterTySurfaceCave->SetFinish(ground); // ground surface with tyvek
+  OpWaterTySurfaceCave->SetSigmaAlpha(0.2);
 
   G4double RINDEX_tyvek[NUM] =
       { 1.5, 1.5 }; // polyethylene permittivity is ~2.25
@@ -849,6 +856,28 @@ void WCSimDetectorConstruction::ConstructMaterials()
         0.94, 0.93, 0.92, 0.91, 0.90,
         0.89, 0.86};
 
+	G4double TyREFLECTIVITYCave[NUMENTRIES_TY] = // Tyvek refelctivity
+      { 0.97,
+        0.97, 0.97, 0.97, 0.97, 0.97,
+        0.97, 0.97, 0.97, 0.97, 0.97,
+        0.97, 0.97, 0.97, 0.97, 0.97,
+        0.97, 0.97, 0.97, 0.97, 0.97,
+        0.96, 0.96, 0.95, 0.95, 0.95,
+        0.94, 0.93, 0.92, 0.91, 0.90,
+        0.89, 0.86};
+
+/*
+	G4double TyREFLECTIVITYCave[NUMENTRIES_TY] = // Tyvek refelctivity for testing (this material turns off tyvek reflection
+      { 0.,
+        0., 0., 0., 0., 0.,
+        0., 0., 0., 0., 0.,
+        0., 0., 0., 0., 0.,
+        0., 0., 0., 0., 0.,
+        0., 0., 0., 0., 0.,
+        0., 0., 0., 0., 0.,
+        0., 0.};
+*/
+
   G4MaterialPropertiesTable *MPT_Tyvek = new G4MaterialPropertiesTable();
   // MPT_Tyvek->AddProperty("RINDEX", PP, RINDEX_tyvek, NUM);
   // MPT_Tyvek->AddProperty("ABSLENGTH", ENERGY_water, BLACKABS_blacksheet, NUMENTRIES_water);
@@ -861,6 +890,14 @@ void WCSimDetectorConstruction::ConstructMaterials()
   MPTWater_Ty->AddProperty("BACKSCATTERCONSTANT", PP, TyBACKSCATTERCONSTANT, NUM);
   MPTWater_Ty->AddProperty("REFLECTIVITY",  PP_TyREFLECTIVITY, TyREFLECTIVITY, NUMENTRIES_TY);
   OpWaterTySurface->SetMaterialPropertiesTable(MPTWater_Ty);
+
+	G4MaterialPropertiesTable *MPTWater_TyCave = new G4MaterialPropertiesTable();
+  MPTWater_TyCave->AddProperty("RINDEX", PP, RINDEX_tyvek, NUM);
+  MPTWater_TyCave->AddProperty("SPECULARLOBECONSTANT", PP, TySPECULARLOBECONSTANT, NUM);
+  MPTWater_TyCave->AddProperty("SPECULARSPIKECONSTANT", PP, TySPECULARSPIKECONSTANT, NUM);
+  MPTWater_TyCave->AddProperty("BACKSCATTERCONSTANT", PP, TyBACKSCATTERCONSTANT, NUM);
+  MPTWater_TyCave->AddProperty("REFLECTIVITY",  PP_TyREFLECTIVITY, TyREFLECTIVITYCave, NUMENTRIES_TY);
+  OpWaterTySurfaceCave->SetMaterialPropertiesTable(MPTWater_TyCave);
   //
   // ----
 

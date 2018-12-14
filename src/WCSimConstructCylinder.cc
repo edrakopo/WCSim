@@ -201,7 +201,7 @@ G4LogicalVolume* WCSimDetectorConstruction::ConstructCylinder()
                           false,
                           0);
 
-    G4LogicalSkinSurface *TyvekCaveBarrelSurface = new G4LogicalSkinSurface("TyvekCaveBarrelSurface", logicCaveTyvek, OpWaterTySurface);
+    G4LogicalSkinSurface *TyvekCaveBarrelSurface = new G4LogicalSkinSurface("TyvekCaveBarrelSurface", logicCaveTyvek, OpWaterTySurfaceCave);
     //-----------------------------------------------------
     // Cylinder caps' tyvek
     //-----------------------------------------------------
@@ -221,7 +221,7 @@ G4LogicalVolume* WCSimDetectorConstruction::ConstructCylinder()
                              "CaveCapTyvek",
                              0, 0, 0);
 
-    G4LogicalSkinSurface *TyvekCaveTopSurface = new G4LogicalSkinSurface("TyvekCaveTopSurface", logicCaveCapsTyvek, OpWaterTySurface);
+    G4LogicalSkinSurface *TyvekCaveTopSurface = new G4LogicalSkinSurface("TyvekCaveTopSurface", logicCaveCapsTyvek, OpWaterTySurfaceCave);
 
 
     G4VPhysicalVolume *physiTopCaveTyvek =
