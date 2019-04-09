@@ -9,7 +9,7 @@
 
 WCSimDetectorMessenger::WCSimDetectorMessenger(WCSimDetectorConstruction* WCSimDet)
 :WCSimDetector(WCSimDet)
-{ 
+{
   WCSimDir = new G4UIdirectory("/WCSim/");
   WCSimDir->SetGuidance("Commands to change the geometry of the simulation");
 
@@ -71,8 +71,8 @@ WCSimDetectorMessenger::WCSimDetectorMessenger(WCSimDetectorConstruction* WCSimD
   SavePi0->SetParameterName("SavePi0",false);
   SavePi0->SetCandidates("true false");
   SavePi0->AvailableForStates(G4State_PreInit, G4State_Idle);
-  
-  
+
+
   PMTQEMethod = new G4UIcmdWithAString("/WCSim/PMTQEMethod", this);
   PMTQEMethod->SetGuidance("Set the PMT configuration.");
   PMTQEMethod->SetGuidance("Available options are:\n"
@@ -158,6 +158,57 @@ WCSimDetectorMessenger::WCSimDetectorMessenger(WCSimDetectorConstruction* WCSimD
   ODTyvekSheetThickness->SetDefaultUnit("mm");
   ODTyvekSheetThickness->SetUnitCandidates("mm");
 
+  // OD Tyvek material properties
+  TyvekSA = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODTyvekSigmaAlpha", this);
+  TyvekSA->SetGuidance("Set OD Tyvek roughness.");
+  TyvekSA->SetParameterName("TyvekSigmaAlpha", true);
+  TyvekSA->SetDefaultValue(0.2);
+
+  CaveTyvekSA = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODCaveTyvekSigmaAlpha", this);
+  CaveTyvekSA->SetGuidance("Set OD cave Tyvek roughness.");
+  CaveTyvekSA->SetParameterName("CaveTyvekSigmaAlpha", true);
+  CaveTyvekSA->SetDefaultValue(0.2);
+
+  TyvekReflection = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODTyvekReflectivity", this);
+  TyvekReflection->SetGuidance("Set OD Tyvek refelectivity.");
+  TyvekReflection->SetParameterName("TyvekReflectivity", true);
+  TyvekReflection->SetDefaultValue(0.8);
+
+  CaveTyvekReflection = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODCaveTyvekReflectivity", this);
+  CaveTyvekReflection->SetGuidance("Set OD cave Tyvek refelectivity.");
+  CaveTyvekReflection->SetParameterName("CaveTyvekReflectivity", true);
+  CaveTyvekReflection->SetDefaultValue(0.8);
+
+  TyvekReflectionSL = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODTyvekSpecularLobe", this);
+  TyvekReflectionSL->SetGuidance("Set OD Tyvek specular lobe constant.");
+  TyvekReflectionSL->SetParameterName("TyvekSpecularLobe", true);
+  TyvekReflectionSL->SetDefaultValue(0.75);
+
+  CaveTyvekReflectionSL = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODCaveTyvekSpecularLobe", this);
+  CaveTyvekReflectionSL->SetGuidance("Set OD cave Tyvek specular lobe constant.");
+  CaveTyvekReflectionSL->SetParameterName("CaveTyvekSpecularLobe", true);
+  CaveTyvekReflection->SetDefaultValue(0.75);
+
+  TyvekReflectionSS = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODTyvekSpecularSpike", this);
+  TyvekReflectionSS->SetGuidance("Set OD Tyvek specular spike constant.");
+  TyvekReflectionSS->SetParameterName("TyvekSpecularSpike", true);
+  TyvekReflectionSS->SetDefaultValue(0.0);
+
+  CaveTyvekReflectionSS = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODCaveTyvekSpecularSpike", this);
+  CaveTyvekReflectionSS->SetGuidance("Set OD cave Tyvek specular spike constant.");
+  CaveTyvekReflectionSS->SetParameterName("CaveTyvekSpecularSpike", true);
+  CaveTyvekReflectionSS->SetDefaultValue(0.0);
+
+  TyvekReflectionBS = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODTyvekBackScatter", this);
+  TyvekReflectionBS->SetGuidance("Set OD Tyvek back scatter constant.");
+  TyvekReflectionBS->SetParameterName("TyvekBackScatter", true);
+  TyvekReflectionBS->SetDefaultValue(0.0);
+
+  CaveTyvekReflectionBS = new G4UIcmdWithADouble("/WCSim/HyperKOD/ODCaveTyvekBackScatter", this);
+  CaveTyvekReflectionBS->SetGuidance("Set OD cave Tyvek back scatter constant.");
+  CaveTyvekReflectionBS->SetParameterName("CaveTyvekBackScatter", true);
+  CaveTyvekReflectionBS->SetDefaultValue(0.0);
+
   // OD WLS Plates thickness
   ODWLSPlatesThickness = new G4UIcmdWithADoubleAndUnit("/WCSim/HyperKOD/ODWLSPlatesThickness", this);
   ODWLSPlatesThickness->SetGuidance("Set OD WLS plates thickness (unit: cm mm).");
@@ -232,8 +283,8 @@ WCSimDetectorMessenger::~WCSimDetectorMessenger()
 }
 
 void WCSimDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{    
-	if( command == PMTConfig ) { 
+{
+	if( command == PMTConfig ) {
 		WCSimDetector->SetIsUpright(false);
 		WCSimDetector->SetIsEggShapedHyperK(false);
 		if ( newValue == "SuperK") {
@@ -257,6 +308,7 @@ void WCSimDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 		} else if ( newValue == "HyperKWithOD" ){
 		  WCSimDetector->SetHyperKWithODGeometry();
           WCSimDetector->SetODEdited(false);
+          WCSimDetector->SetMaterialsEdited(false);
 		} else if ( newValue == "EggShapedHyperK") {
 		  WCSimDetector->SetIsEggShapedHyperK(true);
 		  WCSimDetector->SetEggShapedHyperKGeometry();
@@ -266,7 +318,7 @@ void WCSimDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 		} else
 		  G4cout << "That geometry choice is not defined!" << G4endl;
 	}
-  
+
 	if (command == SavePi0){
 	  G4cout << "Set the flag for saving pi0 info " << newValue << G4endl;
 	  if (newValue=="true"){
@@ -274,7 +326,7 @@ void WCSimDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	  }else if (newValue == "false"){
 	    WCSimDetector->SavePi0Info(false);
 	  }else{
-	    
+
 	  }
 	}
 
@@ -293,7 +345,7 @@ void WCSimDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	    WCSimDetector->SetPMT_QE_Method(4);
 	    G4cout << "4";
 	  }else{
-	    
+
 	  }
 	  G4cout << G4endl;
 	}
@@ -309,7 +361,7 @@ void WCSimDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	  }
 	  G4cout << G4endl;
 	}
-	
+
 	if (command == WCVisChoice){
 	  G4cout << "Set Vis Choice " << newValue << " ";
 	  if (newValue == "OGLSX"){
@@ -341,7 +393,7 @@ void WCSimDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 		}else if (newValue == "10inch"){
 //			WCSimDetector->Set10inchPMTs();
 		}else
-			G4cout << "That PMT size is not defined!" << G4endl;	
+			G4cout << "That PMT size is not defined!" << G4endl;
 	}
 
 	/////////////////////////////////
@@ -360,6 +412,57 @@ void WCSimDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
       }
       G4cout << G4endl;
 	}
+
+    if(command == TyvekSA){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD Tyvek sigma alpha " << newValue << " " << G4endl;
+      WCSimDetector->SetTyvekSigmaAlpha(TyvekSA->GetNewDoubleValue(newValue));
+    }
+    if(command == CaveTyvekSA){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD cave Tyvek sigma alpha " << newValue << " " << G4endl;
+      WCSimDetector->SetCaveTyvekSigmaAlpha(CaveTyvekSA->GetNewDoubleValue(newValue));
+    }
+    if(command == TyvekReflection){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD Tyvek reflectivity " << newValue << " " << G4endl;
+      WCSimDetector->SetTyvekReflectivity(TyvekReflection->GetNewDoubleValue(newValue));
+    }
+    if(command == CaveTyvekReflection){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD cave Tyvek reflectivity " << newValue << " " << G4endl;
+      WCSimDetector->SetCaveTyvekReflectivity(CaveTyvekReflection->GetNewDoubleValue(newValue));
+    }
+    if(command == TyvekReflectionSL){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD Tyvek specular lobe constant " << newValue << " " << G4endl;
+      WCSimDetector->SetTyvekSpecularLobe(TyvekReflectionSL->GetNewDoubleValue(newValue));
+    }
+    if(command == CaveTyvekReflectionSL){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD cave Tyvek specular lobe constant " << newValue << " " << G4endl;
+      WCSimDetector->SetCaveTyvekSpecularLobe(CaveTyvekReflectionSL->GetNewDoubleValue(newValue));
+    }
+    if(command == TyvekReflectionSS){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD Tyvek specular spike constant " << newValue << " " << G4endl;
+      WCSimDetector->SetTyvekSpecularSpike(TyvekReflectionSS->GetNewDoubleValue(newValue));
+    }
+    if(command == CaveTyvekReflectionSS){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD cave Tyvek specular spike constant " << newValue << " " << G4endl;
+      WCSimDetector->SetCaveTyvekSpecularSpike(CaveTyvekReflectionSS->GetNewDoubleValue(newValue));
+    }
+    if(command == TyvekReflectionBS){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD Tyvek back scatter constant " << newValue << " " << G4endl;
+      WCSimDetector->SetTyvekBackScatter(TyvekReflectionBS->GetNewDoubleValue(newValue));
+    }
+    if(command == CaveTyvekReflectionBS){
+      WCSimDetector->SetMaterialsEdited(true);
+      G4cout << "Set OD cave Tyvek back scatter constant " << newValue << " " << G4endl;
+      WCSimDetector->SetCaveTyvekBackScatter(CaveTyvekReflectionBS->GetNewDoubleValue(newValue));
+    }
 
     if(command == ODLateralWaterDepth){
 	WCSimDetector->SetODEdited(true);
@@ -432,6 +535,8 @@ void WCSimDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     /////////////////////////////////
 
   if(command == WCConstruct) {
+    // if the materials definitions have changed then rebuild the materials
+    if (WCSimDetector->GetMaterialsEdited() == true) {WCSimDetector->UpdateMaterials();}
 //If the OD geometry has been changed, then reconstruct the whole tank with the proper recalculated dimensions
 	if (WCSimDetector->GetODEdited() == true) {WCSimDetector->UpdateODGeo();}
 	WCSimDetector->UpdateGeometry();

@@ -78,6 +78,7 @@ public:
   void SetHyperKWithODGeometry();
   void UpdateGeometry();
   void UpdateODGeo();
+  void UpdateMaterials();
 
 
   G4String GetDetectorName()      {return WCDetectorName;}
@@ -92,7 +93,7 @@ public:
   G4int    GetTotalNumODPmts() {return totalNumODPMTs;}
 
   G4int    GetPMT_QE_Method(){return PMT_QE_Method;}
-  G4double GetwaterTank_Length() {return waterTank_Length;} 
+  G4double GetwaterTank_Length() {return waterTank_Length;}
   G4int    UsePMT_Coll_Eff(){return PMT_Coll_Eff;}
 
   G4double GetPMTSize1() {return WCPMTSize;}
@@ -108,9 +109,9 @@ public:
   void SetBasicPMTObject(WCSimBasicPMTObject *PMT){BasicPMT=PMT;}
   WCSimBasicPMTObject* GetBasicPMTObject(){ return BasicPMT;}
 
-  std::map<G4String, WCSimPMTObject*>  CollectionNameMap; 
+  std::map<G4String, WCSimPMTObject*>  CollectionNameMap;
   WCSimPMTObject * PMTptr;
- 
+
   void SetPMTPointer(WCSimPMTObject* PMT, G4String CollectionName){
     CollectionNameMap[CollectionName] = PMT;
   }
@@ -129,7 +130,7 @@ public:
   }
 
   G4ThreeVector GetWCOffset(){return WCOffset;}
-  
+
   // Related to the WC tube ID
   static G4int GetTubeID(std::string tubeTag){return tubeLocationMap[tubeTag];}
   static G4Transform3D GetTubeTransform(int tubeNo){return tubeIDMap[tubeNo];}
@@ -140,7 +141,7 @@ public:
   // Related to Pi0 analysis
   G4bool SavePi0Info()              {return pi0Info_isSaved;}
   void   SavePi0Info(G4bool choice) {pi0Info_isSaved=choice;}
-  
+
   void   SetPMT_QE_Method(G4int choice){PMT_QE_Method = choice;}
   void   SetPMT_Coll_Eff(G4int choice){PMT_Coll_Eff = choice;}
   void   SetVis_Choice(G4String choice){Vis_Choice = choice;}
@@ -185,6 +186,21 @@ public:
     }
   }
 
+
+  void SetCaveTyvekReflectivity(G4double val){CaveTyvekReflectivity = val;}
+  void SetTyvekReflectivity(G4double val){TyvekReflectivity = val;}
+  // Following constants must add up to 1 for CaveTyvek and 1 for Tyvek
+  void SetCaveTyvekSpecularLobe(G4double val){CaveTyvekSpecularLobe = val;}
+  void SetTyvekSpecularLobe(G4double val){TyvekSpecularLobe = val;}
+  void SetCaveTyvekSpecularSpike(G4double val){CaveTyvekSpecularSpike = val;}
+  void SetTyvekSpecularSpike(G4double val){TyvekSpecularSpike = val;}
+  void SetCaveTyvekBackScatter(G4double val){CaveTyvekBackScatter = val;}
+  void SetTyvekBackScatter(G4double val){TyvekBackScatter = val;}
+  void SetCaveTyvekSigmaAlpha(G4double val){CaveTyvekSigmaAlpha = val;}
+  void SetTyvekSigmaAlpha(G4double val){TyvekSigmaAlpha = val;}
+  void SetMaterialsEdited(G4bool val){materialsEdited = val;}
+  G4bool GetMaterialsEdited(){return materialsEdited;}
+
   void SetWCODLateralWaterDepth(G4double val){WCODLateralWaterDepth = val;}
   void SetWCODHeightWaterDepth(G4double val){WCODHeightWaterDepth = val;}
   void SetWCODDeadSpace(G4double val){WCODDeadSpace = val;}
@@ -203,7 +219,7 @@ public:
   ///////////////////////////////
 
   G4double GetWCIDHeight(){return WCIDHeight;}
- 
+
 private:
 
   // Tuning parameters
@@ -267,7 +283,7 @@ private:
   void TraverseReplicas(G4VPhysicalVolume*, int, const G4Transform3D&,
 			DescriptionFcnPtr);
 
-  void DescribeAndDescendGeometry(G4VPhysicalVolume*, int, int, 
+  void DescribeAndDescendGeometry(G4VPhysicalVolume*, int, int,
 				  const G4Transform3D&, DescriptionFcnPtr);
 
   // Functions that the traversal routines call or we use to manipulate the
@@ -275,16 +291,16 @@ private:
   void DumpGeometryTableToFile();
 
   void PrintGeometryTree(G4VPhysicalVolume*, int, int, const G4Transform3D&);
-  void DescribeAndRegisterPMT(G4VPhysicalVolume*, int, int, 
+  void DescribeAndRegisterPMT(G4VPhysicalVolume*, int, int,
 			      const G4Transform3D&);
-  void DescribeAndRegisterPMT_1KT(G4VPhysicalVolume*, int, int, 
+  void DescribeAndRegisterPMT_1KT(G4VPhysicalVolume*, int, int,
 				  const G4Transform3D&);
-  void GetWCGeom(G4VPhysicalVolume*, int, int, 
+  void GetWCGeom(G4VPhysicalVolume*, int, int,
 			      const G4Transform3D&);
 
   //---Volume lengths
 
-  // These are shared between the different member functions 
+  // These are shared between the different member functions
   // constructWC, constructFGD, constructlArD, constuctMRD
   // toggle between FGD(0) and lArD(1)
   // toggle between lArD readout types
@@ -313,12 +329,12 @@ private:
   // "OGLSX" for classic visualization
   // "RayTracer" for RayTracer visualization
   G4String Vis_Choice;
-  
+
 
   G4double WCLength;
 
   G4double WCPosition;
-  
+
   // Hit collection name parameters
   G4String WCDetectorName;
   G4String WCIDCollectionName;
@@ -355,7 +371,7 @@ private:
   G4double WCBarrelNumPMTHorizontal;
   G4double WCCapPMTSpacing;
   G4double WCCapEdgeWidth;//jh TODO: not used
-  
+
   G4double WCCapEdgeLimit;
   G4double WCBlackSheetThickness;
 
@@ -364,6 +380,18 @@ private:
   // ################### //
 
   G4double CaveTyvekSheetThickness;
+  // Value from 0->1
+  G4double CaveTyvekReflectivity = 0.80;
+  G4double TyvekReflectivity = 0.80;
+  // Following constants must add up to 1 for CaveTyvek and 1 for Tyvek
+  G4double CaveTyvekSpecularLobe = 0.75;
+  G4double TyvekSpecularLobe = 0.75;
+  G4double CaveTyvekSpecularSpike = 0.0;
+  G4double TyvekSpecularSpike = 0.0;
+  G4double CaveTyvekBackScatter = 0.0;
+  G4double TyvekBackScatter = 0.0;
+  G4double CaveTyvekSigmaAlpha = 0.2;
+  G4double TyvekSigmaAlpha = 0.2;
 
   // ############################### //
   // # *** END Cave Parameters *** # //
@@ -486,6 +514,7 @@ private:
     G4double outerPMT_BotRpitch;
     G4double outerPMT_Apitch;
     G4bool odEdited;
+    G4bool materialsEdited;
 
 
   G4double blackSheetThickness;
@@ -508,7 +537,7 @@ private:
 
   std::ofstream geoFile;   // File for text output
 
-  G4int totalNumPMTs;      // The number of PMTs for this configuration     
+  G4int totalNumPMTs;      // The number of PMTs for this configuration
   G4int totalNumODPMTs;      // The number of PMTs for this configuration
   G4double WCCylInfo[3];    // Info for the geometry tree: radius & length or mail box, length, width and depth
   G4double WCPMTSize;       // Info for the geometry tree: pmt size
@@ -528,11 +557,10 @@ private:
 
   G4int myConfiguration;   // Detector Config Parameter
   G4double innerradius;
- 
+
   std::vector<WCSimPmtInfo*> fpmts;
   std::vector<WCSimPmtInfo*> fODpmts;
 
 };
 
 #endif
-

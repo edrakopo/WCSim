@@ -21,15 +21,15 @@ class WCSimDetectorMessenger: public G4UImessenger
  public:
   WCSimDetectorMessenger(WCSimDetectorConstruction* mpga);
   ~WCSimDetectorMessenger();
-  
+
  public:
   void         SetNewValue(G4UIcommand* command, G4String newValues);
- 
+
  private:
   WCSimDetectorConstruction* WCSimDetector;
 
  private: //commands
-  
+
   G4UIdirectory*      WCSimDir;
   G4UIcmdWithAString* PMTConfig;
   G4UIcmdWithAString* WCVisChoice;
@@ -54,6 +54,17 @@ class WCSimDetectorMessenger: public G4UImessenger
   G4UIcmdWithADoubleAndUnit* ODWLSPlatesLength;
   // OD PMTs
   G4UIcmdWithAString* PMTODRadius;
+  // OD Tyvek
+  G4UIcmdWithADouble* TyvekSA;
+  G4UIcmdWithADouble* CaveTyvekSA;
+  G4UIcmdWithADouble* TyvekReflection;
+  G4UIcmdWithADouble* CaveTyvekReflection;
+  G4UIcmdWithADouble* TyvekReflectionSL;
+  G4UIcmdWithADouble* CaveTyvekReflectionSL;
+  G4UIcmdWithADouble* TyvekReflectionSS;
+  G4UIcmdWithADouble* CaveTyvekReflectionSS;
+  G4UIcmdWithADouble* TyvekReflectionBS;
+  G4UIcmdWithADouble* CaveTyvekReflectionBS;
   // #PMTs and position
   G4UIcmdWithAnInteger* PMTODperCellHorizontal;
   G4UIcmdWithAnInteger* PMTODperCellVertical;
@@ -65,5 +76,3 @@ class WCSimDetectorMessenger: public G4UImessenger
 };
 
 #endif
-
-

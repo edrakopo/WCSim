@@ -28,7 +28,7 @@ hash_map<std::string, int, hash<std::string> > WCSimDetectorConstruction::ODtube
 
 WCSimDetectorConstruction::WCSimDetectorConstruction(G4int DetConfig,WCSimTuningParameters* WCSimTuningPars):WCSimTuningParams(WCSimTuningPars)
 {
-	
+
   // Decide if (only for the case of !1kT detector) should be upright or horizontal
   isUpright = false;
   isEggShapedHyperK  = false;
@@ -42,7 +42,7 @@ WCSimDetectorConstruction::WCSimDetectorConstruction(G4int DetConfig,WCSimTuning
   //-----------------------------------------------------
   // Create Materials
   //-----------------------------------------------------
-    
+
   ConstructMaterials();
 
   //-----------------------------------------------------
@@ -65,12 +65,12 @@ WCSimDetectorConstruction::WCSimDetectorConstruction(G4int DetConfig,WCSimTuning
   SetSuperKGeometry();
   //SetHyperKGeometry();
 
-  //----------------------------------------------------- 
+  //-----------------------------------------------------
   // Set whether or not Pi0-specific info is saved
   //-----------------------------------------------------
 
   SavePi0Info(false);
-  
+
   //-----------------------------------------------------
   // Set the default method for implementing the PMT QE
   //-----------------------------------------------------
@@ -81,7 +81,7 @@ WCSimDetectorConstruction::WCSimDetectorConstruction(G4int DetConfig,WCSimTuning
   // set default visualizer to OGLSX
   SetVis_Choice("OGLSX");
 
-  //----------------------------------------------------- 
+  //-----------------------------------------------------
   // Make the detector messenger to allow changing geometry
   //-----------------------------------------------------
 
@@ -94,11 +94,11 @@ WCSimDetectorConstruction::WCSimDetectorConstruction(G4int DetConfig,WCSimTuning
 
 void WCSimDetectorConstruction::UpdateGeometry()
 {
- 
-  
+
+
   G4bool geomChanged = true;
   G4RunManager::GetRunManager()->DefineWorldVolume(Construct(), geomChanged);
- 
+
  }
 
 
@@ -115,7 +115,7 @@ WCSimDetectorConstruction::~WCSimDetectorConstruction(){
 }
 
 G4VPhysicalVolume* WCSimDetectorConstruction::Construct()
-{  
+{
   G4GeometryManager::GetInstance()->OpenGeometry();
 
   G4PhysicalVolumeStore::GetInstance()->Clean();
@@ -132,7 +132,7 @@ G4VPhysicalVolume* WCSimDetectorConstruction::Construct()
   // Create Logical Volumes
   //-----------------------------------------------------
 
-  // First create the logical volumes of the sub detectors.  After they are 
+  // First create the logical volumes of the sub detectors.  After they are
   // created their size will be used to make the world volume.
   // Note the order is important because they rearrange themselves depending
   // on their size and detector ordering.
@@ -146,7 +146,7 @@ G4VPhysicalVolume* WCSimDetectorConstruction::Construct()
 
   //-------------------------------
 
-  // Now make the detector Hall.  The lengths of the subdectors 
+  // Now make the detector Hall.  The lengths of the subdectors
   // were set above.
 
   G4double expHallLength = 3.*WCLength; //jl145 - extra space to simulate cosmic muons more easily
@@ -158,8 +158,8 @@ G4VPhysicalVolume* WCSimDetectorConstruction::Construct()
 				  expHallHalfLength,
 				  expHallHalfLength,
 				  expHallHalfLength);
-  
-  G4LogicalVolume* logicExpHall = 
+
+  G4LogicalVolume* logicExpHall =
     new G4LogicalVolume(solidExpHall,
 			G4Material::GetMaterial("Vacuum"),
 			"expHall",
@@ -175,7 +175,7 @@ G4VPhysicalVolume* WCSimDetectorConstruction::Construct()
   //-----------------------------------------------------
 
   // Experimental Hall
-  G4VPhysicalVolume* physiExpHall = 
+  G4VPhysicalVolume* physiExpHall =
     new G4PVPlacement(0,G4ThreeVector(),
   		      logicExpHall,
   		      "expHall",
@@ -189,7 +189,7 @@ G4VPhysicalVolume* WCSimDetectorConstruction::Construct()
 	  //rotationMatrix->rotateZ(90.*deg);
 
   G4ThreeVector genPosition = G4ThreeVector(0., 0., WCPosition);
-  G4VPhysicalVolume* physiWCBox = 
+  G4VPhysicalVolume* physiWCBox =
     new G4PVPlacement(0,
 		      genPosition,
 		      logicWCBox,
@@ -206,19 +206,19 @@ G4VPhysicalVolume* WCSimDetectorConstruction::Construct()
 
 
   // Traverse and print the geometry Tree
-  
-  //  TraverseReplicas(physiWCBox, 0, G4Transform3D(), 
+
+  //  TraverseReplicas(physiWCBox, 0, G4Transform3D(),
   //	   &WCSimDetectorConstruction::PrintGeometryTree) ;
-  
-  TraverseReplicas(physiWCBox, 0, G4Transform3D(), 
+
+  TraverseReplicas(physiWCBox, 0, G4Transform3D(),
 	           &WCSimDetectorConstruction::DescribeAndRegisterPMT) ;
-  
-  
-  TraverseReplicas(physiWCBox, 0, G4Transform3D(), 
+
+
+  TraverseReplicas(physiWCBox, 0, G4Transform3D(),
 		   &WCSimDetectorConstruction::GetWCGeom) ;
-  
+
   DumpGeometryTableToFile();
-  
+
   // Return the pointer to the physical experimental hall
   return physiExpHall;
 }
@@ -292,6 +292,7 @@ void WCSimDetectorConstruction::SaveOptionsToOutput(WCSimRootOptions * wcopt)
   wcopt->SetPMTCollEff(PMT_Coll_Eff);
 }
 
+
 //A function to recalculate the dimensions of the HKOD tank if the parameters are changed
 void WCSimDetectorConstruction::UpdateODGeo()
 {
@@ -300,6 +301,117 @@ void WCSimDetectorConstruction::UpdateODGeo()
 
   WCODCapPMTSpacing  = (pi*WCIDDiameter/(round(WCIDDiameter*sqrt(pi*WCPMTODPercentCoverage)/(10.0*WCPMTODRadius))));
   WCODCapEdgeLimit = WCIDDiameter/2.0 - WCPMTODRadius;
+}
+
+//A function to recalculate the dimensions of the HKOD tank if the parameters are changed
+void WCSimDetectorConstruction::UpdateMaterials()
+{
+
+  const G4int NUM = 2;
+  G4double PP[NUM] = { 1.4E-9*GeV,6.2E-9*GeV};
+
+  if (TyvekSigmaAlpha > 1 || TyvekSigmaAlpha < 0) {TyvekSigmaAlpha = 0.2;}
+	if (CaveTyvekSigmaAlpha > 1 || CaveTyvekSigmaAlpha < 0) {CaveTyvekSigmaAlpha = 0.2;}
+	if (TyvekReflectivity < 0 || TyvekReflectivity > 1){TyvekReflectivity = 0.8;}
+	if (CaveTyvekReflectivity < 0 || CaveTyvekReflectivity > 1){CaveTyvekReflectivity = 0.8;}
+	if (TyvekSpecularLobe + TyvekSpecularSpike + TyvekBackScatter > 1){
+		TyvekSpecularLobe = 0.75;
+		TyvekSpecularSpike = 0.0;
+		TyvekBackScatter = 0.0;
+	}
+	if (CaveTyvekSpecularLobe + CaveTyvekSpecularSpike + CaveTyvekBackScatter > 1){
+		CaveTyvekSpecularLobe = 0.75;
+		CaveTyvekSpecularSpike = 0.0;
+		CaveTyvekBackScatter = 0.0;
+	}
+
+  G4double RINDEX_tyvek[NUM] =
+      { 1.5, 1.5 }; // polyethylene permittivity is ~2.25
+  G4double TySPECULARLOBECONSTANT[NUM] =
+      { TyvekSpecularLobe, TyvekSpecularLobe }; // crudely estimated from A. Chavarria's thesis
+  G4double TySPECULARSPIKECONSTANT[NUM] =
+      { TyvekSpecularSpike, TyvekSpecularSpike };
+  G4double TyBACKSCATTERCONSTANT[NUM] =
+      { TyvekBackScatter, TyvekBackScatter };
+  // Lambertian prob is therefore 1 - rest of constants
+
+  G4double RINDEX_tyvekCave[NUM] =
+      { 1.5, 1.5 }; // polyethylene permittivity is ~2.25
+  G4double TySPECULARLOBECONSTANTCave[NUM] =
+      { CaveTyvekSpecularLobe, CaveTyvekSpecularLobe }; // crudely estimated from A. Chavarria's thesis
+  G4double TySPECULARSPIKECONSTANTCave[NUM] =
+      { CaveTyvekSpecularSpike, CaveTyvekSpecularSpike };
+  G4double TyBACKSCATTERCONSTANTCave[NUM] =
+      { CaveTyvekBackScatter, CaveTyvekBackScatter };
+  // Lambertian prob is therefore 1 - rest of constants
+
+#define NUMENTRIES_TY 33 // Number of bins of wavelength to be used for the Tyvek reflectivity
+
+
+  G4double PP_TyREFLECTIVITY[NUMENTRIES_TY] = //Tyvek reflectivity wavelength bins
+      { 2.06642*eV,
+        2.10144*eV, 2.13768*eV, 2.17518*eV, 2.21402*eV, 2.25428*eV,
+        2.29602*eV, 2.33934*eV, 2.38433*eV, 2.43108*eV, 2.4797*eV,
+        2.53031*eV, 2.58302*eV, 2.63798*eV, 2.69533*eV, 2.75523*eV,
+        2.81784*eV, 2.88338*eV, 2.95203*eV, 3.02403*eV, 3.09963*eV,
+        3.17911*eV, 3.26277*eV, 3.35095*eV, 3.44403*eV, 3.54243*eV,
+        3.64662*eV, 3.75713*eV, 3.87454*eV, 3.99952*eV, 4.13284*eV,
+        4.27535*eV, 4.42804*eV};
+
+  G4double TyREFLECTIVITY[NUMENTRIES_TY] = // Tyvek refelctivity structure side
+      { TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity,
+        TyvekReflectivity, TyvekReflectivity};
+
+  G4double TyREFLECTIVITYCave[NUMENTRIES_TY] = // Tyvek refelctivity cave side
+      { CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity,
+        CaveTyvekReflectivity, CaveTyvekReflectivity};
+
+        OpWaterTySurface->SetSigmaAlpha(TyvekSigmaAlpha);
+        OpWaterTySurfaceCave->SetSigmaAlpha(CaveTyvekSigmaAlpha);
+
+  G4MaterialPropertiesTable *MPTWater_Ty = new G4MaterialPropertiesTable();
+  MPTWater_Ty->AddProperty("RINDEX", PP, RINDEX_tyvek, NUM);
+  MPTWater_Ty->AddProperty("SPECULARLOBECONSTANT", PP, TySPECULARLOBECONSTANT, NUM);
+  MPTWater_Ty->AddProperty("SPECULARSPIKECONSTANT", PP, TySPECULARSPIKECONSTANT, NUM);
+  MPTWater_Ty->AddProperty("BACKSCATTERCONSTANT", PP, TyBACKSCATTERCONSTANT, NUM);
+  MPTWater_Ty->AddProperty("REFLECTIVITY",  PP_TyREFLECTIVITY, TyREFLECTIVITY, NUMENTRIES_TY);
+  OpWaterTySurface->SetMaterialPropertiesTable(MPTWater_Ty);
+
+  G4MaterialPropertiesTable *MPTWater_TyCave = new G4MaterialPropertiesTable();
+  MPTWater_TyCave->AddProperty("RINDEX", PP, RINDEX_tyvekCave, NUM);
+  MPTWater_TyCave->AddProperty("SPECULARLOBECONSTANT", PP, TySPECULARLOBECONSTANTCave, NUM);
+  MPTWater_TyCave->AddProperty("SPECULARSPIKECONSTANT", PP, TySPECULARSPIKECONSTANTCave, NUM);
+  MPTWater_TyCave->AddProperty("BACKSCATTERCONSTANT", PP, TyBACKSCATTERCONSTANTCave, NUM);
+  MPTWater_TyCave->AddProperty("REFLECTIVITY",  PP_TyREFLECTIVITY, TyREFLECTIVITYCave, NUMENTRIES_TY);
+  OpWaterTySurfaceCave->SetMaterialPropertiesTable(MPTWater_TyCave);
+
+
+
+
 }
 
 void WCSimDetectorConstruction::CreateCombinedPMTQE(std::vector<G4String> CollectionName){
