@@ -59,7 +59,7 @@ G4Colour  magenta (1.0, 0.0, 1.0) ;  // magenta
 G4Colour  yellow  (1.0, 1.0, 0.0) ;  // yellow
 
 #ifndef ACTIVATE_IDPMTS
-// #define ACTIVATE_IDPMTS
+ #define ACTIVATE_IDPMTS
 #endif
 
 G4LogicalVolume* WCSimDetectorConstruction::ConstructCylinder()
@@ -1087,14 +1087,16 @@ If used here, uncomment the SetVisAttributes(WClogic) line, and comment out the 
 
       G4RotationMatrix* WCPMTRotation = new G4RotationMatrix;
       WCPMTRotation->rotateY(270.*deg);
-      WCPMTRotation->rotateX((2*pi-totalAngle)/2.);//align the PMT with the Cell
+      WCPMTRotation->rotateX(2*pi - (2*pi-totalAngle)/2.);//align the PMT with the Cell
 
       G4double towerWidthOD = WCODRadius*tan(2*pi-totalAngle);
+      // We don't want the same number of OD PMTs squished horizontally so we scale down the horizontal PMTs by the width of the extra tower
+      G4double ratioOfWidths = (double)(WCPMTODperCellHorizontal)*(towerWidthOD/barrelODCellWidth);
+      G4int WCPMTODperCellHorizontalExtra = (int)(ratioOfWidths+0.5);
+      G4double horizontalODSpacing   = towerWidthOD/(double)WCPMTODperCellHorizontalExtra;
+      G4double verticalODSpacing   = barrelODCellHeight/WCPMTODperCellVertical;
 
-      G4double horizontalODSpacing   = towerWidthOD/WCPMTODperCellHorizontal;
-      G4double verticalODSpacing     = barrelCellHeight*(WCODRadius/WCIDRadius)/WCPMTODperCellVertical;
-
-      for(G4double i = 0; i < (WCPMTODperCellHorizontal); i++){
+      for(G4double i = 0; i < (WCPMTODperCellHorizontalExtra); i++){
         for(G4double j = 0; j < WCPMTODperCellVertical; j++){
 			G4ThreeVector Container =  G4ThreeVector((WCODRadius+sphereRadius/2)/cos(dPhi/2.)*cos((2.*pi-totalAngle)/2.),
 													 -towerWidthOD/2.+(i+0.5)*horizontalODSpacing,
@@ -1102,15 +1104,14 @@ If used here, uncomment the SetVisAttributes(WClogic) line, and comment out the 
 
 			Container.rotateZ(-(2*pi-totalAngle)/2.); // align with the symmetry
 
-
 			G4VPhysicalVolume* physiWCExtraBarrelWLSPlate =
 					new G4PVPlacement(WCPMTRotation,              // its rotation
 									  Container,
 									  logicWCODWLSAndPMT,                // its logical volume
 									  "WCExtraBarrelCellODContainer",             // its name
-									  logicWCBarrelCell,         // its mother volume
+									  logicWCExtraTowerCell,         // its mother volume
 									  false,                     // no boolean operations
-									  0,
+									  (int)(i*WCPMTODperCellVertical+j),
 									  true);
 
 
@@ -1665,13 +1666,13 @@ G4LogicalVolume* WCSimDetectorConstruction::ConstructCaps(G4int zflip)
 
   G4double barrelCellWidth = 2.*WCIDRadius*tan(dPhi/2.);
   G4double horizontalSpacing   = barrelCellWidth/WCPMTperCellHorizontal;
-  G4double verticalSpacing     = barrelCellHeight/WCPMTperCellVertical;
+  G4double verticalSpacing     = (barrelCellHeight-WCBorderPMTOffset)/WCPMTperCellVertical;
 
   for(G4double i = 0; i < WCPMTperCellHorizontal; i++){
     for(G4double j = 0; j < WCPMTperCellVertical; j++){
       G4ThreeVector PMTPosition =  G4ThreeVector(WCIDRadius,
 						 -barrelCellWidth/2.+(i+0.5)*horizontalSpacing,
-						 (-barrelCellHeight/2.+(j+0.5)*verticalSpacing)*zflip);
+						 (-(barrelCellHeight-WCBorderPMTOffset)/2.+(j+0.5)*verticalSpacing)*zflip);
 #ifdef ACTIVATE_IDPMTS
      G4VPhysicalVolume* physiWCBarrelBorderPMT =
 	new G4PVPlacement(WCPMTRotation,                      // its rotation
@@ -1703,13 +1704,13 @@ G4LogicalVolume* WCSimDetectorConstruction::ConstructCaps(G4int zflip)
     G4double towerWidth = WCIDRadius*tan(2*pi-totalAngle);
 
     G4double horizontalSpacing   = towerWidth/(WCBarrelNumPMTHorizontal-WCBarrelRingNPhi*WCPMTperCellHorizontal);
-    G4double verticalSpacing     = barrelCellHeight/WCPMTperCellVertical;
+    G4double verticalSpacing     = (barrelCellHeight-WCBorderPMTOffset)/WCPMTperCellVertical;
 
     for(G4double i = 0; i < (WCBarrelNumPMTHorizontal-WCBarrelRingNPhi*WCPMTperCellHorizontal); i++){
       for(G4double j = 0; j < WCPMTperCellVertical; j++){
 	G4ThreeVector PMTPosition =  G4ThreeVector(WCIDRadius/cos(dPhi/2.)*cos((2.*pi-totalAngle)/2.),
 				towerWidth/2.-(i+0.5)*horizontalSpacing,
-			       (-barrelCellHeight/2.+(j+0.5)*verticalSpacing)*zflip);
+			       (-(barrelCellHeight-WCBorderPMTOffset)/2.+(j+0.5)*verticalSpacing)*zflip);
 	PMTPosition.rotateZ(-(2*pi-totalAngle)/2.); // align with the symmetry 
 	                                            //axes of the cell 
 #ifdef ACTIVATE_IDPMTS
@@ -1768,8 +1769,9 @@ G4LogicalVolume* WCSimDetectorConstruction::ConstructCaps(G4int zflip)
     WCPMTODRotation->rotateY(270.*deg);
 
     G4double barrelODCellWidth   = 2.*WCODRadius*tan(dPhi/2.);
+    G4double barrelODCellHeight  = barrelCellHeight * (barrelODCellWidth/barrelCellWidth);
     G4double horizontalODSpacing = barrelODCellWidth/WCPMTODperCellHorizontal;
-    G4double verticalODSpacing   = barrelCellHeight * (barrelODCellWidth/barrelCellWidth) / WCPMTODperCellVertical;
+    G4double verticalODSpacing   = barrelODCellHeight / WCPMTODperCellVertical;
 
     for(G4double i = 0; i < WCPMTODperCellHorizontal; i++){
       for(G4double j = 0; j < WCPMTODperCellVertical; j++){
@@ -1804,21 +1806,26 @@ G4LogicalVolume* WCSimDetectorConstruction::ConstructCaps(G4int zflip)
                             false,
                             0,true);
 
-
+      G4double barrelODCellWidth   = 2.*WCODRadius*tan(dPhi/2.);
+      G4double barrelODCellHeight  = barrelCellHeight * (barrelODCellWidth/barrelCellWidth);
+      
       G4RotationMatrix* WCPMTRotation = new G4RotationMatrix;
       WCPMTRotation->rotateY(270.*deg);
-      WCPMTRotation->rotateX((2*pi-totalAngle)/2.);//align the PMT with the Cell
+      WCPMTRotation->rotateX(2*pi - (2*pi-totalAngle)/2.);//align the PMT with the Cell
 
       G4double towerWidthOD = WCODRadius*tan(2*pi-totalAngle);
+      // We don't want the same number of OD PMTs squished horizontally so we scale down the horizontal PMTs by the width of the extra tower
+      G4double ratioOfWidths = (double)(WCPMTODperCellHorizontal)*(towerWidthOD/barrelODCellWidth);
+      G4int WCPMTODperCellHorizontalExtra = (int)(ratioOfWidths+0.5);
+      G4double horizontalODSpacing   = towerWidthOD/(double)WCPMTODperCellHorizontalExtra;
+      G4double verticalODSpacing   = barrelODCellHeight/WCPMTODperCellVertical;
+      
 
-      G4double horizontalODSpacing = towerWidthOD/WCPMTODperCellHorizontal;
-      G4double verticalODSpacing   = barrelCellHeight*(WCODRadius/WCIDRadius)/WCPMTODperCellVertical;
-
-      for(G4double i = 0; i < (WCPMTODperCellHorizontal); i++){
+      for(G4double i = 0; i < (WCPMTODperCellHorizontalExtra); i++){
         for(G4double j = 0; j < WCPMTODperCellVertical; j++){
-          G4ThreeVector Container =  G4ThreeVector(WCODRadius+sphereRadius/2,
-                                                   -towerWidthOD/2.+(i+0.5)*horizontalODSpacing,
-                                                   -(barrelCellHeight * (WCODRadius/WCIDRadius))/2.+(j+0.5)*verticalODSpacing);
+          G4ThreeVector Container =  G4ThreeVector((WCODRadius+sphereRadius/2)/cos(dPhi/2.)*cos((2.*pi-totalAngle)/2.),
+													 -towerWidthOD/2.+(i+0.5)*horizontalODSpacing,
+													 -(barrelCellHeight * (WCODRadius/WCIDRadius))/2.+(j+0.5)*verticalODSpacing);
           Container.rotateZ(-(2*pi-totalAngle)/2.); // align with the symmetry
 
           G4VPhysicalVolume* physiWCBarrelPMT =
@@ -1841,8 +1848,22 @@ G4LogicalVolume* WCSimDetectorConstruction::ConstructCaps(G4int zflip)
   return logicCapAssembly;
 
 }
-
-
+// This function finds the factors of a number and aims to minimise the difference between multiplied factors. This will result in a more square-like distribution of PMTs per cell.
+void FindNiceFactors(G4int NPMT, G4double factors[2]){
+  bool found = false;
+  int difference = 100000;
+  for (int i = 2; i<= (int)(NPMT/2); i++){
+    if (NPMT % i == 0){
+      // Factors found
+      found = true;
+      double a = i;
+      double b = NPMT/i;
+      int d = abs(a - b);
+      if (d < difference){difference = d; factors[0] = a; factors[1] = b;} // make the difference between multiplied factors as small as possible, for a square rather than rectangle shape.
+    }
+  }
+  if (!found){FindNiceFactors(NPMT-1, factors);} 
+}
 void ComputeWCODPMT(G4int NPMT, G4double *NPMTHorizontal, G4double *NPMTVertical){
   switch (NPMT) {
     case 0:
@@ -1867,13 +1888,10 @@ void ComputeWCODPMT(G4int NPMT, G4double *NPMTHorizontal, G4double *NPMTVertical
       *NPMTVertical   = 2;
       break;
     default:
-      if(NPMT%2 == 0){
-        *NPMTHorizontal = NPMT/2;
-        *NPMTVertical   = NPMT/2;
-      }else{
-        *NPMTHorizontal = NPMT/2 + 1;
-        *NPMTVertical   = NPMT/2;
-      }
+    G4double factors[2];
+    FindNiceFactors(NPMT, factors);
+    *NPMTHorizontal = factors[1];
+    *NPMTVertical   = factors[0];
 
       break;
   }

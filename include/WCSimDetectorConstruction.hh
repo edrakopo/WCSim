@@ -246,6 +246,9 @@ private:
   G4OpticalSurface * OpWaterWLSSurface;
   G4OpticalSurface * OpWLSTySurface;
 
+  //Cladding
+  G4OpticalSurface * OpCladdingSurface;
+
   // The messenger we use to change the geometry.
 
   WCSimDetectorMessenger* messenger;
@@ -264,6 +267,7 @@ private:
 
   G4LogicalVolume* logicWCODWLSAndPMT;
   G4LogicalVolume* logicWCODWLSPlate;
+  G4LogicalVolume* logicWCODWLSPlateCladding;
 
   G4LogicalVolume* logicWCBarrelCellBlackSheet;
   G4LogicalVolume* logicWCTowerBlackSheet;
@@ -351,6 +355,7 @@ private:
   G4double WCPMTRadius;
   G4double WCPMTExposeHeight;
   G4double WCBarrelPMTOffset;
+  G4double WCBorderPMTOffset;
 
   G4double WCIDDiameter;
 

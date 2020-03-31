@@ -219,8 +219,8 @@ void WCSimDetectorConstruction::SetHyperKGeometry()
   WCPMTName           = PMT->GetPMTName();
   WCPMTExposeHeight   = PMT->GetExposeHeight();
   WCPMTRadius         = PMT->GetRadius();
-  WCIDDiameter          = 70.8*m; // = 74m - 2*(60cm ID wall + 1m OD)
-  WCIDHeight            = 54.8*m; // = 60m - 2*(60cm ID wall + 2m OD)
+  WCIDDiameter          = 65.8*m; // = 69m - 2*(60cm ID wall + 1m OD)
+  WCIDHeight            = 67.8*m; // = 73m - 2*(60cm ID wall + 2m OD)
   WCBarrelPMTOffset     = WCPMTRadius; //offset from vertical
   WCPMTperCellHorizontal= 4;
   WCPMTperCellVertical  = 3;
@@ -243,9 +243,10 @@ void WCSimDetectorConstruction::SetHyperKWithODGeometry()
   WCPMTName           = PMT->GetPMTName();
   WCPMTExposeHeight   = PMT->GetExposeHeight();
   WCPMTRadius         = PMT->GetRadius();
-  WCIDDiameter          = 70.8*m; // = 74m - 2*(60cm ID wall + 1m OD)
-  WCIDHeight            = 54.8*m; // = 60m - 2*(60cm ID wall + 2m OD)
+  WCIDDiameter          = 65.8*m; // = 69m - 2*(60cm ID wall + 1m OD)
+  WCIDHeight            = 67.8*m; // = 73m - 2*(60cm ID wall + 2m OD)
   WCBarrelPMTOffset     = WCPMTRadius; //offset from vertical
+  WCBorderPMTOffset     = 0.25*m; // PMT offset in border cells. Also makes distance between PMTs shorter.
   WCPMTperCellHorizontal= 4;
   WCPMTperCellVertical  = 3;
   WCPMTPercentCoverage  = 40.0;
