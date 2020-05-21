@@ -99,7 +99,7 @@ G4float WCSimDetectorConstruction::GetStackingPMTQE(G4float PhotonWavelength, G4
   if(flag==1){
     if(PMT && WLS){
       return (G4float)(std::max(PMT->GetgQE()->Eval(PhotonWavelength,0,"S"),
-                                WLS->GetgAbs()->Eval(PhotonWavelength,0,"S")))*ratio;
+                                WLS->GetgQE()->Eval(PhotonWavelength,0,"S")))*ratio; //WLS->GetgAbs()->Eval(PhotonWavelength,0,"S")))*ratio;
     } else {
       return (G4float)(PMT->GetgQE()->Eval(PhotonWavelength,0,"S"))*ratio;
     }

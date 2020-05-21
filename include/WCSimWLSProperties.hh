@@ -19,11 +19,14 @@ class WCSimWLSProperties {
   virtual G4double* GetRIndex()=0;
   virtual G4double* GetAbs()=0;
   virtual G4double* GetEm()=0;
+  virtual G4double* GetQE()=0;
 
  public:
   TGraph* GetgAbs(){ return gAbs;};
+  TGraph* GetgQE(){ return gQE;};
   TGraph* GetgEm() { return gEm;};
   TGraph *gAbs;
+  TGraph *gQE;
   TGraph *gEm;
   TH1F *emissionHist;
 };
@@ -49,8 +52,13 @@ class EljenEJ286 : public WCSimWLSProperties{
   G4double* GetPhotonEnergy_EM();
   G4double* GetEm();
 
+  G4int  GetNumEntries_QE(); 
+  G4double* GetQE();
+  G4double* GetQEWavelength();
+
   void SetgAbs();
   void SetgEm();
+  void SetgQE();//(TGraph *g){ gQE=g;};
 
   void SethEm();
 };

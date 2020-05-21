@@ -19,7 +19,7 @@ double hWL(double E){
 // http://www.eljentechnology.com/products/wavelength-shifting-plastics/ej-280-ej-282-ej-284-ej-286
 #define NUMENTRIES_WLS 60
 
-EljenEJ286::EljenEJ286() { SetgAbs(); SetgEm(); SethEm();}
+EljenEJ286::EljenEJ286() { SetgAbs(); SetgEm(); SethEm(); SetgQE();}
 EljenEJ286::~EljenEJ286(){}
 
 G4String EljenEJ286::GetWLSPlateName() { G4String WLSPlateName = "EljenEJ286"; return WLSPlateName;}
@@ -157,8 +157,34 @@ G4double *EljenEJ286::GetEm() {
 }
 
 // ###################### //
+// ///////// WLS QE /////////
+// // ###################### //
+#define NUMENTRIES_WLS_QE 20
+
+G4int EljenEJ286::GetNumEntries_QE() { return NUMENTRIES_WLS_QE;}
+
+G4double* EljenEJ286::GetQE(){
+  static G4double QE[NUMENTRIES_WLS_QE] = { 0.00, .005, .09, .21, .28, .30, .29, .28, .26, .24, .22, .18, .13, .075, .04, .02, .008, 0.00, 0.00, 0.00};
+  return QE;
+}
+
+G4double* EljenEJ286::GetQEWavelength(){
+  static G4double wavelength[NUMENTRIES_WLS_QE] = { 260., 280., 300., 320., 340., 360., 380., 400., 420., 440., 460., 480., 500., 520., 540., 560., 580., 600., 620., 640.};
+  return wavelength;
+}
+
+// ###################### //
 ///////// STACKING /////////
 // ###################### //
+void EljenEJ286::SetgQE(){
+  gQE = new TGraph();
+
+   // Then fill with point there is data
+   for(int i=NUMENTRIES_WLS_QE-1; i>0; i--){
+       gQE->SetPoint(i,GetQEWavelength()[i],GetQE()[i]);
+   }
+}
+  
 
 void EljenEJ286::SetgAbs(){
   double AbsAmp[NUMENTRIES_WLS_ABS] =

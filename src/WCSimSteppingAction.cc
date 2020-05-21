@@ -360,7 +360,7 @@ EmittedPhoton WCSimSteppingAction::EmitPhoton(G4ThreeVector absorbedPhotonPositi
 }// End of EmitPhoton function.
 
 
-
+/*
 void WCSimSteppingAction::WLSPhysicsProcess(const G4Step *aStep){
 
   G4Track *aTrack = aStep->GetTrack();
@@ -445,4 +445,4 @@ void WCSimSteppingAction::WLSPhysicsProcess(const G4Step *aStep){
     } // END if in WLS
   } // END if opticalphoton
 
-}
+}*/

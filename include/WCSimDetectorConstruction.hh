@@ -214,6 +214,7 @@ private:
   // to check their state if we change the geometry, otherwise will segfault
   // between events!
   WCSimWCSD* aWCPMT;
+  //WCSimWCSD* aWCPMT2;
 
   //Water, Blacksheet surface
   G4OpticalSurface * OpWaterBSSurface;
@@ -240,6 +241,7 @@ private:
   G4LogicalVolume*   ConstructCylinder();
   G4LogicalVolume* ConstructPMT(G4String,G4String,G4String detectorElement="tank");
   G4LogicalVolume* ConstructPMTAndWLSPlate(G4String,G4String,G4String detectorElement="OD");
+  //G4LogicalVolume* ConstructPMTAndWLSPlate(G4String,G4String,G4String,G4String detectorElement="OD");
 
   G4LogicalVolume* ConstructCaps(G4int zflip);
 
