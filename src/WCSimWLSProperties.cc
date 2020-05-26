@@ -164,7 +164,9 @@ G4double *EljenEJ286::GetEm() {
 G4int EljenEJ286::GetNumEntries_QE() { return NUMENTRIES_WLS_QE;}
 
 G4double* EljenEJ286::GetQE(){
-  static G4double QE[NUMENTRIES_WLS_QE] = { 0.00, .005, .09, .21, .28, .30, .29, .28, .26, .24, .22, .18, .13, .075, .04, .02, .008, 0.00, 0.00, 0.00};
+//  static G4double QE[NUMENTRIES_WLS_QE] = { 0.00, .005, .09, .21, .28, .30, .29, .28, .26, .24, .22, .18, .13, .075, .04, .02, .008, 0.00, 0.00, 0.00};q
+  static G4double QE[NUMENTRIES_WLS_QE] = { 1.00, 1., 1.0, 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.0, 1.0, 1.00, 1.00, 1.00, 1.00, 1.00};
+
   return QE;
 }
 
