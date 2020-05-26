@@ -239,7 +239,9 @@ else {
   return logicWCPMT;
 }
 
-
+/*******************************************/
+// Construct PMT and WLS plate
+/*******************************************/
 G4LogicalVolume* WCSimDetectorConstruction::ConstructPMTAndWLSPlate(G4String PMTName, G4String CollectionName, G4String detectorElement){
 
   PMTKey_t key(PMTName,CollectionName);
@@ -269,13 +271,13 @@ else
   G4double expose;
   G4double radius;
   G4double glassThickness;
+ 
   G4String Water = "Water";
   G4String WLS_Material = "Water";
   if(isWLSFilled) WLS_Material = "WLS_PVT";
   G4String WLSCladding_Material = "Water";
   if(isWLSFilled) WLSCladding_Material = "Tyvek";
-
-
+  
   WCSimPMTObject *PMT = GetPMTPointer(CollectionName);
   expose = PMT->GetExposeHeight();
   radius = PMT->GetRadius();
@@ -284,7 +286,40 @@ else
   G4double sphereRadius = (expose*expose+ radius*radius)/(2*expose);
   G4double PMTOffset =  sphereRadius - expose;
 
-  //All components of the PMT are now contained in a single logical volume logicWCPMT.
+  //------ WLS ------//
+  // CLADDING
+  G4double CladdingWidth= 1.*mm;
+
+  // Box structure to hold the WLS and PMT object
+    G4Box *container =
+      new G4Box("rectangleWLS",
+                (WCODWLSPlatesLength+2*CladdingWidth)/2,
+                (WCODWLSPlatesLength+2*CladdingWidth)/2,
+                sphereRadius/2);
+
+  G4LogicalVolume* logicContainer =
+      new G4LogicalVolume(container,
+                          G4Material::GetMaterial(Water),
+                          "WCODContainer",
+                          0,0,0);
+
+  G4VisAttributes* visContainer
+      = new G4VisAttributes(G4Colour((0.0, 1.0, 0.0)));
+  visContainer->SetForceWireframe(true);
+
+  logicContainer->SetVisAttributes(G4VisAttributes::Invisible);
+ // Uncomment following for WLS visualization  
+  logicContainer->SetVisAttributes(visContainer);
+ /* 
+  WCSimPMTObject *PMT = GetPMTPointer(CollectionName);
+  expose = PMT->GetExposeHeight();
+  radius = PMT->GetRadius();
+  glassThickness = PMT->GetPMTGlassThickness();
+
+  G4double sphereRadius = (expose*expose+ radius*radius)/(2*expose);
+  G4double PMTOffset =  sphereRadius - expose;
+*/
+  //All components of the PMT are now contained in a single logical volume logicContainer.
   //Origin is on the blacksheet, faces positive z-direction.
   G4double PMTHolderZ[2] = {0, expose};
   G4double PMTHolderR[2] = {radius, radius};
@@ -349,7 +384,7 @@ else
                   G4ThreeVector(0, 0, -1.0*PMTOffset),
                   logicInteriorWCPMT,
                   "InteriorWCPMT",
-                  logicWCPMT,
+                  logicContainer, //logicWCPMT,
                   false,
                   0);
 
@@ -389,7 +424,7 @@ else
                         G4ThreeVector(0, 0, -1.0*PMTOffset),
                         logicGlassFaceWCPMT,
                         CollectionName,
-                        logicWCPMT,
+                        logicContainer, //logicWCPMT,
                         false,
                         0,
                         checkOverlaps);
@@ -422,7 +457,7 @@ else
     WCPMTVisAtt->SetForceAuxEdgeVisible(true); // force auxiliary edges to be shown
     //logicGlassFaceWCPMT->SetVisAttributes(G4VisAttributes::Invisible);
      logicGlassFaceWCPMT->SetVisAttributes(WCPMTVisAtt);}
-
+/*
    // Instantiate a new sensitive detector 
    // and register this sensitive detector volume with the SD Manager. 
    G4SDManager* SDman = G4SDManager::GetSDMpointer();
@@ -439,16 +474,15 @@ else
 
   logicGlassFaceWCPMT->SetSensitiveDetector( aWCPMT );
 
-  PMTLogicalVolumes[key] = logicWCPMT;
+  PMTLogicalVolumes[key] = logicContainer; //logicWCPMT;
 
   //Add Logical Border Surface
   new G4LogicalBorderSurface("GlassCathodeSurface",
                              physiGlassFaceWCPMT,
                              physiInteriorWCPMT,
                              OpGlassCathodeSurface);
- //return logicWCPMT;
- 
-     
+ *///return logicWCPMT;
+ /*     
   //------ WLS ------//
   // CLADDING
   G4double CladdingWidth= 1.*mm;
@@ -476,7 +510,7 @@ else
   logicContainer->SetVisAttributes(G4VisAttributes::Invisible);
   //// Uncomment following for WLS visualization  
   logicContainer->SetVisAttributes(visContainer);
-
+*/
   ////////////////////////////////////////////////
   // Create a WLS plate towards x,y plane and drilled hole will be around z-axis
   // WLS
@@ -536,10 +570,6 @@ else
   logicWCODWLSPlateCladding->SetVisAttributes(visWLSCladding);
 
   ////////////////////////////////////////////////
-  // PMTs
-  //G4LogicalVolume* logicWCPMT = ConstructPMT(PMTName,CollectionName,detectorElement);
-
-  ////////////////////////////////////////////////
   // Ali G. : Do dat placement inda box
   G4VPhysicalVolume* physiWLS =
       new G4PVPlacement(0,
@@ -572,6 +602,30 @@ else
                         false,
                         0,
                         checkOverlaps);
+
+  // Instantiate a new sensitive detector 
+  // and register this sensitive detector volume with the SD Manager. 
+  G4SDManager* SDman = G4SDManager::GetSDMpointer();
+   G4String SDName = "/WCSim/";
+   SDName += CollectionName;
+
+   // If there is no such sensitive detector with that SDName yet,
+   // make a new one
+   if( ! SDman->FindSensitiveDetector(SDName, false) ) {
+
+    aWCPMT = new WCSimWCSD(CollectionName,SDName,this,detectorElement);
+    SDman->AddNewDetector( aWCPMT );
+  }
+
+  logicGlassFaceWCPMT->SetSensitiveDetector( aWCPMT );
+
+  PMTLogicalVolumes[key] = logicContainer; //logicWCPMT;
+
+  //Add Logical Border Surface
+  new G4LogicalBorderSurface("GlassCathodeSurface",
+                             physiGlassFaceWCPMT,
+                             physiInteriorWCPMT,
+                             OpGlassCathodeSurface);
 
 
   return logicContainer;
