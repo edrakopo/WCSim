@@ -977,7 +977,9 @@ If used here, uncomment the SetVisAttributes(WClogic) line, and comment out the 
     // WLS and OD PMTs Barrel Side
     // ------------------------------------------------------------
 
-    logicWCODWLSAndPMT = ConstructPMTAndWLSPlate(WCPMTODName, WCODCollectionName, "OD");
+//    logicWCODWLSAndPMT = ConstructPMTAndWLSPlate(WCPMTODName, WCODCollectionName, "OD");
+    logicWCODWLSAndPMT = ConstructPMT(WCPMTODName, WCODCollectionName, "OD");
+    logicWCODWLSAndPMT2 = ConstructWLSPlate(WCWLSODName, WCODCollectionName, WCODCollectionName2, "OD");
     // sphereRadius is the size along z of the logicWCODCapTyvek box containing WLS+PMT
 
     ///////////////   Barrel PMT placement
@@ -1024,6 +1026,17 @@ If used here, uncomment the SetVisAttributes(WClogic) line, and comment out the 
             new G4PVPlacement(WCPMTODRotation,           // its rotation
                               Container,
                               logicWCODWLSAndPMT,         // its logical volume
+                              "WCBarrelCellODContainer",  // its name
+                              logicWCBarrelCell,         // its mother volume
+                              false,                     // no boolean operations
+                              (int)(i*WCPMTODperCellVertical+j),
+                              true);
+
+
+        G4VPhysicalVolume* physiWCBarrelWLSPlate2 =
+            new G4PVPlacement(WCPMTODRotation,           // its rotation
+                              Container,
+                              logicWCODWLSAndPMT2,         // its logical volume
                               "WCBarrelCellODContainer",  // its name
                               logicWCBarrelCell,         // its mother volume
                               false,                     // no boolean operations

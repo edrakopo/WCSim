@@ -326,6 +326,7 @@ void WCSimEventAction::EndOfEventAction(const G4Event* evt)
   // ----------------------------------------------------------------------
 
   WCSimWCHitsCollection* WCHC_OD=NULL;
+  WCSimWCHitsCollection* WCHC_OD2=NULL;
   WCSimWCPMT* WCDMPMT_OD=NULL;
   WCSimWCAddDarkNoise* WCDNM_OD=NULL;
   WCSimWCDigitizerBase* WCDM_OD=NULL;
@@ -334,15 +335,23 @@ void WCSimEventAction::EndOfEventAction(const G4Event* evt)
   WCSimWCDigitsCollection* WCDC_hits_OD=NULL;
   WCSimWCTriggeredDigitsCollection *WCDC_OD=NULL;
   if(detectorConstructor->GetIsODConstructed()){
-    WCHC_OD = 0;
+    WCHC_OD = 0; WCHC_OD2 = 0;
     G4String WCODCollectionName = detectorConstructor->GetODCollectionName();
+    G4String WCODCollectionName2 = detectorConstructor->GetODCollectionName2();
+
     if(HCE){
       G4String name = WCODCollectionName;
       G4int collectionID = SDman->GetCollectionID(name);
+      G4String name2 = WCODCollectionName2;
+      G4int collectionID2 = SDman->GetCollectionID(name2);
+
       if(collectionID>-1) WCHC_OD = (WCSimWCHitsCollection*)HCE->GetHC(collectionID);
+      if(collectionID>-1) WCHC_OD2 = (WCSimWCHitsCollection*)HCE->GetHC(collectionID2);
       G4cout << G4endl;
       G4cout<< "WCSimEventAction::EndOfEventAction() (WCSimWCHitsCollection*)" << WCODCollectionName
             << " has " << WCHC_OD->entries() << " entries" << G4endl;
+      G4cout<< "WCSimEventAction::EndOfEventAction() (WCSimWCHitsCollection*)-WLS" << WCODCollectionName2
+            << " has " << WCHC_OD2->entries() << " entries" << G4endl;
       G4cout << G4endl;
     }
 

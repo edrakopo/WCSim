@@ -150,9 +150,10 @@ int WCSimWCTriggerBase::GetPostTriggerWindow(TriggerType_t t)
 void WCSimWCTriggerBase::AdjustNDigitsThresholdForNoise()
 {
   // int npmts = this->myDetector->GetTotalNumPmts();
-  int npmts;
+  int npmts; int nwls;
   if(detectorElement=="tank") npmts = this->myDetector->GetTotalNumPmts();
-  else if(detectorElement=="OD") npmts = this->myDetector->GetTotalNumODPmts();
+  else if(detectorElement=="OD"){ npmts = this->myDetector->GetTotalNumODPmts();
+  nwls = this->myDetector->GetTotalNumODWLSs();}
 
   double trigger_window_seconds = ndigitsWindow * 1E-9;
   double dark_rate_Hz = PMTDarkRate * 1000;

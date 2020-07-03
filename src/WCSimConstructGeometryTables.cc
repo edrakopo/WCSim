@@ -113,16 +113,18 @@ void WCSimDetectorConstruction::DescribeAndRegisterPMT(G4VPhysicalVolume* aPV ,i
     // First increment the number of PMTs in the tank.
     if(aPV->GetName()== WCIDCollectionName) totalNumPMTs++;
     if(aPV->GetName()== WCODCollectionName) totalNumODPMTs++;
+    if(aPV->GetName()== WCODCollectionName) totalNumODWLSs++;
 
     // Put the location of this tube into the location map so we can find
     // its ID later.  It is coded by its tubeTag string.
     // This scheme must match that used in WCSimWCSD::ProcessHits()
 
-    std::string tubeTag;
-    for (int i=0; i <= aDepth; i++)
+    std::string tubeTag; std::string wlsTag;
+    for (int i=0; i <= aDepth; i++){
       tubeTag += ":" + replicaNoString[i];
+      wlsTag += ":" + replicaNoString[i];
     // G4cout << tubeTag << G4endl;
-
+    }
     if(aPV->GetName()== WCIDCollectionName) {
       if(tubeLocationMap.find(tubeTag) != tubeLocationMap.end()) {
         G4cerr << "Repeated tube tag: " << tubeTag << G4endl;
@@ -149,8 +151,21 @@ void WCSimDetectorConstruction::DescribeAndRegisterPMT(G4VPhysicalVolume* aPV ,i
       }
       ODtubeLocationMap[tubeTag] = totalNumODPMTs;
 
-      // Put the transform for this tube into the map keyed by its ID
+      // Put the transform for this tube into the map keyed by its ID 
       ODtubeIDMap[totalNumODPMTs] = aTransform;
+
+     if(ODwlsLocationMap.find(wlsTag) != ODwlsLocationMap.end()) {
+       G4cerr << "Repeated wls tag: " << wlsTag << G4endl;
+        G4cerr << "Assigned to both tube #" << ODwlsLocationMap[wlsTag] << " and #" << totalNumODWLSs << G4endl;
+        G4cerr << "Cannot continue -- hits will not be recorded correctly." << G4endl;
+        G4cerr << "Please make sure that logical volumes with multiple placements are each given a unique copy number"
+               << G4endl;
+        assert(false);
+      }
+      ODwlsLocationMap[wlsTag] = totalNumODWLSs;
+
+      // Put the transform for this tube into the map keyed by its ID
+       ODwlsIDMap[totalNumODWLSs] = aTransform;
     }
 
       // G4cout <<  "depth " << depth.str() << G4endl;
@@ -299,6 +314,43 @@ void WCSimDetectorConstruction::DumpGeometryTableToFile()
     fODpmts.push_back(new_pmt);
 
   }
+
+  // Record locations of OD PMTs to file ffODpmts variables
+  for (unsigned int i=0;i<fODwlss.size();i++){
+    delete fODwlss.at(i);
+  }
+  fODwlss.clear();
+
+  // Grab the wls information from the wlsID Map and dump to file.
+  for ( int wlsID = 1; wlsID <= totalNumODWLSs; wlsID++){
+    G4Transform3D newTransform = ODwlsIDMap[wlsID];
+
+    // Get wls orientation vector
+    G4Vector3D nullOrient = G4Vector3D(0,0,1);
+    G4Vector3D wlsOrientation = newTransform * nullOrient;
+
+    // Figure out if pmt is on top/bottom or barrel
+    // print key: 0-top, 1-barrel, 2-bottom, 
+    if (wlsOrientation.z()==1.0)// bottom 
+    {cylLocation=2;}
+    else if (wlsOrientation.z()==-1.0)// top 
+    {cylLocation=0;}
+    else // barrel
+    {cylLocation=1;}
+    
+    geoFile.precision(9);
+    geoFile << setw(4) << wlsID 
+ 	    << " " << setw(8) << newTransform.getTranslation().getX()/cm
+ 	    << " " << setw(8) << newTransform.getTranslation().getY()/cm
+ 	    << " " << setw(8) << newTransform.getTranslation().getZ()/cm
+	    << " " << setw(7) << wlsOrientation.x()
+	    << " " << setw(7) << wlsOrientation.y()
+	    << " " << setw(7) << wlsOrientation.z()
+ 	    << " " << setw(3) << cylLocation
+ 	    << G4endl;
+  }
+  
+
 
   geoFile.close();
 

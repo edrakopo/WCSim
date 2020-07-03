@@ -318,7 +318,7 @@ void WCSimSteppingAction::CollectPhotonsInfoInWLSPlates(const G4Step *aStep) {
 } // END DebugWLSPlates
 
 // This function will select a wavelength for the emitted photon and return it as a wavelength in nm.
-double WCSimSteppingAction::EmittedPhotonWavelength(){
+/*double WCSimSteppingAction::EmittedPhotonWavelength(){
 
 
   return det->GetWLSPointer()->emissionHist->GetRandom();
@@ -359,7 +359,7 @@ EmittedPhoton WCSimSteppingAction::EmitPhoton(G4ThreeVector absorbedPhotonPositi
   return phot;
 }// End of EmitPhoton function.
 
-
+*/
 /*
 void WCSimSteppingAction::WLSPhysicsProcess(const G4Step *aStep){
 

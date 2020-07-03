@@ -161,6 +161,8 @@ void WCSimRunAction::FillGeoTree(){
   G4int orientation;
   Float_t offset[3];
   
+  G4int numwlsOD;
+
   Int_t tubeNo;
   Float_t pos[3];
   Float_t rot[3];
@@ -189,6 +191,7 @@ void WCSimRunAction::FillGeoTree(){
   pmtradiusOD = wcsimdetector->GetODPMTSize();
   numpmt = wcsimdetector->GetTotalNumPmts();
   numpmtOD = wcsimdetector->GetTotalNumODPmts();
+  numwlsOD = wcsimdetector->GetTotalNumODWLSs();
 
   orientation = 0;
   

@@ -3,6 +3,7 @@
 
 #include "WCSimPmtInfo.hh"
 #include "WCSimPMTObject.hh"
+#include "WCSimWLSObject.hh"
 #include "WCSimRootOptions.hh"
 #include "WCSimWLSProperties.hh"
 
@@ -90,6 +91,7 @@ public:
   G4double GetGeo_Dm(G4int);
   G4int    GetTotalNumPmts() {return totalNumPMTs;}
   G4int    GetTotalNumODPmts() {return totalNumODPMTs;}
+  G4int    GetTotalNumODWLSs() {return totalNumODWLSs;}
 
   G4int    GetPMT_QE_Method(){return PMT_QE_Method;}
   G4double GetwaterTank_Length() {return waterTank_Length;} 
@@ -100,6 +102,9 @@ public:
   G4float GetPMTQE(G4String,G4float, G4int, G4float, G4float, G4float);
   G4float GetPMTCollectionEfficiency(G4float theta_angle, G4String CollectionName) { return GetPMTPointer(CollectionName)->GetCollectionEfficiency(theta_angle); };
   G4float GetStackingPMTQE(G4float PhotonWavelength, G4int flag, G4float low_wl, G4float high_wl, G4float ratio);
+
+  //adding Collection Efficiency for the plate
+  G4float GetWLSCollectionEfficiency(G4float distance, G4String CollectionName) { return GetWLSPointer(CollectionName)->GetCollectionEfficiency(distance); };
 
   WCSimPMTObject *CreatePMTObject(G4String, G4String);
 
@@ -121,10 +126,24 @@ public:
     return PMTptr;
   }
 
-  WCSimWLSProperties *CreateWLSObject(G4String);
-  WCSimWLSProperties *WLSptr;
-  void SetWLSPointer(WCSimWLSProperties *WLS){WLSptr=WLS;}
-  WCSimWLSProperties* GetWLSPointer(){
+  //WCSimWLSProperties *CreateWLSObject(G4String);
+  WCSimWLSObject *CreateWLSObject(G4String, G4String);
+  WCSimBasicWLSObject *BasicWLS;
+  void SetBasicWLSObject(WCSimBasicWLSObject *WLS){BasicWLS=WLS;}
+  WCSimBasicWLSObject* GetBasicWLSObject(){ return BasicWLS;}
+
+  std::map<G4String, WCSimWLSObject*>  CollectionNameMap2;
+  WCSimWLSObject * WLSptr;
+  //WCSimWLSProperties *WLSptr;
+  //void SetWLSPointer(WCSimWLSProperties *WLS){WLSptr=WLS;}
+  void SetWLSPointer(WCSimWLSObject *WLS, G4String CollectionName){
+    CollectionNameMap2[CollectionName] = WLS;
+ }
+  //WCSimWLSProperties* GetWLSPointer(G4String CollectionName){
+  WCSimWLSObject* GetWLSPointer(G4String CollectionName){
+    WLSptr = CollectionNameMap2[CollectionName];
+    if (WLSptr == NULL) {G4cout << CollectionName << " is not a recognized hit collection. Exiting WCSim." << G4endl; exit(1);}
+
     return WLSptr;
   }
 
@@ -168,6 +187,7 @@ public:
 
   G4String GetIDCollectionName(){return WCIDCollectionName;}
   G4String GetODCollectionName(){return WCODCollectionName;}
+  G4String GetODCollectionName2(){return WCODCollectionName2;}
 
   bool GetIsODConstructed(){return isODConstructed;}
   bool GetIsCombinedPMTCollectionDefined(){return isCombinedPMTCollectionDefined;}
@@ -214,7 +234,7 @@ private:
   // to check their state if we change the geometry, otherwise will segfault
   // between events!
   WCSimWCSD* aWCPMT;
-  //WCSimWCSD* aWCPMT2;
+  WCSimWCSD* aWCWLS;
 
   //Water, Blacksheet surface
   G4OpticalSurface * OpWaterBSSurface;
@@ -240,8 +260,8 @@ private:
   // The Construction routines
   G4LogicalVolume*   ConstructCylinder();
   G4LogicalVolume* ConstructPMT(G4String,G4String,G4String detectorElement="tank");
-  G4LogicalVolume* ConstructPMTAndWLSPlate(G4String,G4String,G4String detectorElement="OD");
-  //G4LogicalVolume* ConstructPMTAndWLSPlate(G4String,G4String,G4String,G4String detectorElement="OD");
+  //G4LogicalVolume* ConstructPMTAndWLSPlate(G4String,G4String,G4String detectorElement="OD");
+  G4LogicalVolume* ConstructWLSPlate(G4String,G4String,G4String,G4String detectorElement="OD");
 
   G4LogicalVolume* ConstructCaps(G4int zflip);
 
@@ -251,6 +271,7 @@ private:
   G4LogicalVolume* logicWCTowerODTyvek;
 
   G4LogicalVolume* logicWCODWLSAndPMT;
+  G4LogicalVolume* logicWCODWLSAndPMT2;
   G4LogicalVolume* logicWCODWLSPlate;
   G4LogicalVolume* logicWCODWLSPlateCladding;
 
@@ -287,6 +308,8 @@ private:
   void GetWCGeom(G4VPhysicalVolume*, int, int, 
 			      const G4Transform3D&);
 
+  void DescribeAndRegisterWLS(G4VPhysicalVolume*, int, int,
+                              const G4Transform3D&);
   //---Volume lengths
 
   // These are shared between the different member functions 
@@ -331,9 +354,12 @@ private:
   // WC PMT parameters
   G4String WCPMTName;
   typedef std::pair<G4String, G4String> PMTKey_t;
+  typedef std::pair<G4String, G4String> WLSKey_t;
   typedef std::map<PMTKey_t, G4LogicalVolume*> PMTMap_t;
+  typedef std::map<WLSKey_t, G4LogicalVolume*> WLSMap_t;
 
   static PMTMap_t PMTLogicalVolumes;
+  static WLSMap_t WLSLogicalVolumes;
 
   // WC geometry parameters
 
@@ -408,8 +434,11 @@ private:
   G4double WCPMTODRadius;
   G4double WCPMTODExposeHeight;
 
+  G4String WCWLSODName;
+
   // Hit collection name parameters
   G4String WCODCollectionName;
+  G4String WCODCollectionName2;
 
   // WLS material name
   bool isWLSFilled;
@@ -515,7 +544,8 @@ private:
   std::ofstream geoFile;   // File for text output
 
   G4int totalNumPMTs;      // The number of PMTs for this configuration     
-  G4int totalNumODPMTs;      // The number of PMTs for this configuration
+  G4int totalNumODPMTs;     // The number of PMTs for this configuration
+  G4int totalNumODWLSs;       // The number of  WLSs for this configuration
   G4double WCCylInfo[3];    // Info for the geometry tree: radius & length or mail box, length, width and depth
   G4double WCPMTSize;       // Info for the geometry tree: pmt size
   G4ThreeVector WCOffset;   // Info for the geometry tree: WC center offset
@@ -530,6 +560,10 @@ private:
   static std::map<int, G4Transform3D> ODtubeIDMap;
   static hash_map<std::string, int, hash<std::string> >  ODtubeLocationMap;
 
+  //OD wls
+  static std::map<int, G4Transform3D> ODwlsIDMap;
+  static hash_map<std::string, int, hash<std::string> >  ODwlsLocationMap;
+
   // Variables related to configuration
 
   G4int myConfiguration;   // Detector Config Parameter
@@ -537,6 +571,7 @@ private:
  
   std::vector<WCSimPmtInfo*> fpmts;
   std::vector<WCSimPmtInfo*> fODpmts;
+  std::vector<WCSimPmtInfo*> fODwlss;
 
 };
 

@@ -1,6 +1,6 @@
 //  -*- mode:c++; tab-width:4;  -*-
 #include "WCSimDetectorConstruction.hh"
-#include "WCSimPMTObject.hh"
+#include "WCSimWLSObject.hh"
 #include "globals.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
@@ -18,7 +18,7 @@
  ***********************************************************/
 
 
-G4float WCSimDetectorConstruction::GetPMTQE(G4String CollectionName, G4float PhotonWavelength, G4int flag, G4float low_wl, G4float high_wl, G4float ratio){
+G4float WCSimDetectorConstruction::GetWLSQE(G4String CollectionName, G4float PhotonWavelength, G4int flag, G4float low_wl, G4float high_wl, G4float ratio){
   // XQ  08/17/10
   // Decide to include the QE in the WCSim detector 
   // rathe than hard coded into the StackingAction
@@ -47,14 +47,14 @@ G4float WCSimDetectorConstruction::GetPMTQE(G4String CollectionName, G4float Pho
     }
   }
   
-  WCSimPMTObject *PMT;
-  PMT = GetPMTPointer(CollectionName);
+  WCSimWLSObject *WLS;
+  PMT = GetWLSPointer(CollectionName);
   G4float *wavelength;
-  wavelength = PMT->GetQEWavelength();
+  wavelength = WLS->GetQEWavelength();
   G4float *QE;
-  QE = PMT->GetQE();
+  QE = WLS->GetQE();
   G4float maxQE;
-  maxQE = PMT->GetmaxQE();
+  maxQE = WLS->GetmaxQE();
   G4double wavelengthQE = 0;
 
   if (flag == 1){
@@ -76,7 +76,7 @@ G4float WCSimDetectorConstruction::GetPMTQE(G4String CollectionName, G4float Pho
 }
 
 
-G4float WCSimDetectorConstruction::GetStackingPMTQE(G4float PhotonWavelength, G4int flag, G4float low_wl, G4float high_wl, G4float ratio) {
+G4float WCSimDetectorConstruction::GetStackingWLSQE(G4float PhotonWavelength, G4int flag, G4float low_wl, G4float high_wl, G4float ratio) {
 
   if (flag==1){
     if (PhotonWavelength <= low_wl || PhotonWavelength >= high_wl || PhotonWavelength <=280 || PhotonWavelength >=660){
@@ -89,22 +89,23 @@ G4float WCSimDetectorConstruction::GetStackingPMTQE(G4float PhotonWavelength, G4
   }
 
   // Recover combined PMT object
-  WCSimBasicPMTObject *PMT;
-  PMT = GetBasicPMTObject();
+  WCSimBasicWLSObject *WLS;
+  WLS = GetBasicWLSObject();
 
   // Recover optical response of any WLS materials
 //  WCSimWLSProperties *WLS;
 //  WLS = GetWLSPointer();
 
   if(flag==1){
-/*    if(PMT){//&& WLS){
-      return (G4float)(std::max(PMT->GetgQE()->Eval(PhotonWavelength,0,"S")))*ratio; //,                           
-                                WLS->GetgAbs()->Eval(PhotonWavelength,0,"S")))*ratio;
-    } else {*/
-      return (G4float)(PMT->GetgQE()->Eval(PhotonWavelength,0,"S"))*ratio;
-   // }
+//    return 0;
+//    if(WLS){//&& WLS){
+ //     return (G4float)(std::max(WLS->GetgQE()->Eval(PhotonWavelength,0,"S")))*ratio; //,                           
+                                //WLS->GetgAbs()->Eval(PhotonWavelength,0,"S")))*ratio;
+//    } else {
+      return (G4float)(WLS->GetgQE()->Eval(PhotonWavelength,0,"S"))*ratio;
+ //   }
   }
-  else if (flag==0) return PMT->GetmaxQE()*ratio;
+  else if (flag==0) return WLS->GetmaxQE()*ratio;
   else return 0;
 
 }

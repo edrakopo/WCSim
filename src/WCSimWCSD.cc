@@ -108,9 +108,11 @@ G4bool WCSimWCSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     return false;
 
   // G4String WCIDCollectionName = fdet->GetIDCollectionName();
-  G4String WCCollectionName;
+  G4String WCCollectionName; G4String WCCollectionName2;
   if(detectorElement=="tank") WCCollectionName = fdet->GetIDCollectionName();
-  else if (detectorElement=="OD") WCCollectionName = fdet->GetODCollectionName();
+  else if (detectorElement=="OD"){ WCCollectionName = fdet->GetODCollectionName();
+  WCCollectionName2 = fdet->GetODCollectionName2();
+ }
 
   // M Fechner : too verbose
   //  if (aStep->GetTrack()->GetTrackStatus() == fAlive)G4cout << "status is fAlive\n";

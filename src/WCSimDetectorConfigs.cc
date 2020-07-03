@@ -310,9 +310,12 @@ void WCSimDetectorConstruction::SetHyperKWithODGeometry()
   isCombinedPMTCollectionDefined=true;
 
   // TEST WLS collection for stacking action
-  G4String WLSType = "EljenEJ286";
+  WCODCollectionName2 = WCDetectorName + "-WLS_OD";
+ // G4String WLSType = "EljenEJ286";
   isWLSFilled = true;
-  CreateWLSObject(WLSType);
+//  CreateWLSObject(WLSType, WCODCollectionName2);
+  WCSimWLSObject *WLSOD = CreateWLSObject("wls", WCODCollectionName2);
+  WCWLSODName           = WLSOD->GetWLSName();
 }
 
 void WCSimDetectorConstruction::SetEggShapedHyperKGeometry()

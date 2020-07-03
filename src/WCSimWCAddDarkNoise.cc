@@ -177,9 +177,10 @@ void WCSimWCAddDarkNoise::AddDarkNoiseBeforeDigi(WCSimWCDigitsCollection* WCHCPM
     #ifdef HYPER_VERBOSITY
     if(detectorElement=="OD")G4cout<<"WCSimWCAddDarkNoise::AddDarkNoiseBeforeDigi ☆ adding dark noise to collection of "<<number_entries<<" entries"<<G4endl;
     #endif
-    G4int thenum_pmts;
+    G4int thenum_pmts; G4int thenum_wlss;
     if(detectorElement=="tank") thenum_pmts = myDetector->GetTotalNumPmts();
-    else if(detectorElement=="OD") thenum_pmts = myDetector->GetTotalNumODPmts();
+    else if(detectorElement=="OD"){ thenum_pmts = myDetector->GetTotalNumODPmts();
+    thenum_wlss = myDetector->GetTotalNumODWLSs();  }
     else G4cout << "### detectorElement undefined ..." << G4endl;
     const G4int number_pmts=thenum_pmts;
     int *PMTindex = new int [number_pmts+1];

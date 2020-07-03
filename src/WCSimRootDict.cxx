@@ -1,6 +1,6 @@
 // Do NOT change. Changes will be lost next time file is generated
 
-#define R__DICTIONARY_FILENAME dIDiskdIdsmIsopamIgroupdIPPEdIsoftwaredIWCSim_2020dIWCSim_WLScorrdIWCSimdIsrcdIWCSimRootDict
+#define R__DICTIONARY_FILENAME dIDiskdIdsmIsopamIgroupdIPPEdIsoftwaredIWCSim_2020dIWCSim_WLSSDdIWCSimdIsrcdIWCSimRootDict
 
 /*******************************************************************/
 #include <stddef.h>
@@ -37,11 +37,11 @@
 namespace std {} using namespace std;
 
 // Header files passed as explicit arguments
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh"
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootGeom.hh"
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimPmtInfo.hh"
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimEnumerations.hh"
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootOptions.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootGeom.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimPmtInfo.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimEnumerations.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootOptions.hh"
 
 // Header files passed via #pragma extra_include
 
@@ -1440,19 +1440,19 @@ namespace ROOT {
 namespace {
   void TriggerDictionaryInitialization_libWCSimRootDict_Impl() {
     static const char* headers[] = {
-"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh",
-"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootGeom.hh",
-"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimPmtInfo.hh",
-"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimEnumerations.hh",
-"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootOptions.hh",
+"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh",
+"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootGeom.hh",
+"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimPmtInfo.hh",
+"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimEnumerations.hh",
+"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootOptions.hh",
 0
     };
     static const char* includePaths[] = {
 "/Disk/ds-sopa-group/PPE/software/root/6.16/build/include",
-"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include",
-"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/../shared/include",
+"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include",
+"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/../shared/include",
 "/Disk/ds-sopa-group/PPE/software/root/6.16/build/include",
-"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim_build/",
+"/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim_build/",
 0
     };
     static const char* fwdDeclCode = R"DICTFWDDCLS(
@@ -1461,19 +1461,19 @@ namespace {
 #pragma clang diagnostic ignored "-Wignored-attributes"
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
 extern int __Cling_Autoloading_Map;
-class __attribute__((annotate("$clingAutoload$WCSimEnumerations.hh")))  __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh")))  WCSimEnumerations;
-class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh")))  WCSimRootTrack;
-class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh")))  WCSimRootCherenkovHit;
-class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh")))  WCSimRootCherenkovHitTime;
-class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh")))  WCSimRootCherenkovDigiHit;
-class __attribute__((annotate(R"ATTRDUMP(WCSimRootEvent Header)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh")))  WCSimRootEventHeader;
-class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh")))  WCSimRootPi0;
-class __attribute__((annotate(R"ATTRDUMP(WCSimRootEvent structure)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh")))  WCSimRootTrigger;
-class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh")))  WCSimRootEvent;
-class __attribute__((annotate(R"ATTRDUMP(WCSimPMT structure)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootGeom.hh")))  WCSimRootPMT;
-class __attribute__((annotate(R"ATTRDUMP(WCSimRootEvent structure)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootGeom.hh")))  WCSimRootGeom;
-class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimPmtInfo.hh")))  WCSimPmtInfo;
-class __attribute__((annotate(R"ATTRDUMP(WCSimRootEvent structure)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootOptions.hh")))  WCSimRootOptions;
+class __attribute__((annotate("$clingAutoload$WCSimEnumerations.hh")))  __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh")))  WCSimEnumerations;
+class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh")))  WCSimRootTrack;
+class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh")))  WCSimRootCherenkovHit;
+class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh")))  WCSimRootCherenkovHitTime;
+class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh")))  WCSimRootCherenkovDigiHit;
+class __attribute__((annotate(R"ATTRDUMP(WCSimRootEvent Header)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh")))  WCSimRootEventHeader;
+class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh")))  WCSimRootPi0;
+class __attribute__((annotate(R"ATTRDUMP(WCSimRootEvent structure)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh")))  WCSimRootTrigger;
+class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh")))  WCSimRootEvent;
+class __attribute__((annotate(R"ATTRDUMP(WCSimPMT structure)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootGeom.hh")))  WCSimRootPMT;
+class __attribute__((annotate(R"ATTRDUMP(WCSimRootEvent structure)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootGeom.hh")))  WCSimRootGeom;
+class __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimPmtInfo.hh")))  WCSimPmtInfo;
+class __attribute__((annotate(R"ATTRDUMP(WCSimRootEvent structure)ATTRDUMP"))) __attribute__((annotate("$clingAutoload$/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootOptions.hh")))  WCSimRootOptions;
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
 #line 1 "libWCSimRootDict dictionary payload"
@@ -1483,11 +1483,11 @@ class __attribute__((annotate(R"ATTRDUMP(WCSimRootEvent structure)ATTRDUMP"))) _
 #endif
 
 #define _BACKWARD_BACKWARD_WARNING_H
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootEvent.hh"
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootGeom.hh"
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimPmtInfo.hh"
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimEnumerations.hh"
-#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLScorr/WCSim/include/WCSimRootOptions.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootEvent.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootGeom.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimPmtInfo.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimEnumerations.hh"
+#include "/Disk/ds-sopa-group/PPE/software/WCSim_2020/WCSim_WLSSD/WCSim/include/WCSimRootOptions.hh"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H
 )DICTPAYLOAD";
